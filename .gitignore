@@ -1,0 +1,24 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# CBDB database (download locally; do not commit)
+data/source/*.sqlite3
+data/source/*.db
+data/source/*.bak
+data/source/*.new
+data/source/manifest.json
+data/source/update_dismissed.json
+
+# Runtime / local state
+data/local/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

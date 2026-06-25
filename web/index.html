@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CBDB Atlas · 歷代人物傳記查詢</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div id="apiBanner" class="banner hidden"></div>
+  <div id="updateModal" class="modal hidden">
+    <div class="dialog">
+      <h2>CBDB 數據更新</h2>
+      <p id="updateModalText"></p>
+      <div id="updateProgress" class="progress hidden"><div class="spinner"></div><span id="updateProgressText"></span></div>
+      <div id="updateActions" class="actions">
+        <button type="button" id="updateNowBtn" class="btn primary">更新數據</button>
+        <button type="button" id="updateDismissBtn" class="btn">繼續使用舊數據</button>
+      </div>
+    </div>
+  </div>
+  <div id="toastHost"></div>
+
+  <header class="site-header">
+    <div class="header-bar">
+      <div class="brand">
+        <span class="logo">CBDB</span>
+        <div>
+          <h1>CBDB Atlas</h1>
+          <p class="sub">直查官方 SQLite 視圖 · 查詢邏輯外置在 <code>queries/</code></p>
+        </div>
+      </div>
+      <div id="headerStats" class="header-stats">
+        <span class="stat-skeleton"></span>
+      </div>
+    </div>
+
+    <div class="search-panel">
+      <form id="searchForm" class="search-form">
+        <div class="search-form-basic">
+          <div class="field type-field">
+            <label for="searchTypeFilter">檢索類型</label>
+            <select id="searchTypeFilter" name="search_type">
+              <option value="person">人物</option>
+              <option value="place">地名</option>
+              <option value="office">官職</option>
+              <option value="text">文獻</option>
+              <option value="institution">機構</option>
+              <option value="event">事件</option>
+              <option value="kinship">親屬關係</option>
+              <option value="assoc">社會關係</option>
+              <option value="entry">入仕途徑</option>
+              <option value="status">社會身份</option>
+              <option value="choronym">郡望</option>
+              <option value="nianhao">年號</option>
+            </select>
+          </div>
+          <div class="field grow keyword-field">
+            <label id="searchInputLabel" for="searchInput">中文姓名</label>
+            <input id="searchInput" type="search" placeholder="姓名、拼音或人物編號" autocomplete="off" />
+          </div>
+          <div class="search-actions">
+            <button type="submit" class="btn primary">檢索</button>
+            <button type="button" id="advancedToggleBtn" class="btn" aria-expanded="false">高級檢索</button>
+          </div>
+        </div>
+        <div id="advancedSearchPanel" class="advanced-search-panel is-collapsed" aria-hidden="true">
+          <div class="advanced-search-inner">
+            <p id="advancedTypeHint" class="advanced-type-hint meta hidden">本類型以關鍵詞檢索為主，暫無額外篩選條件。</p>
+            <div id="personAdvancedFilters" class="advanced-type-block">
+              <div class="adv-person-layout">
+                <div class="adv-person-grid" aria-label="人物高級檢索條件">
+                  <div class="field field-dynasty adv-gc1 adv-gr1">
+                    <label for="dynastyFilter">朝代</label>
+                    <select id="dynastyFilter" name="dynasty"><option value="">不限</option></select>
+                  </div>
+                  <div class="field field-year adv-gc2 adv-gr1">
+                    <label for="birthMin">出生年起</label>
+                    <input id="birthMin" type="number" placeholder="618" />
+                  </div>
+                  <div class="field field-year adv-gc3 adv-gr1">
+                    <label for="birthMax">出生年止</label>
+                    <input id="birthMax" type="number" placeholder="1911" />
+                  </div>
+                  <div class="field field-year adv-gc1 adv-gr2">
+                    <label for="deathMin">卒年起</label>
+                    <input id="deathMin" type="number" placeholder="960" />
+                  </div>
+                  <div class="field field-year adv-gc2 adv-gr2">
+                    <label for="deathMax">卒年止</label>
+                    <input id="deathMax" type="number" placeholder="1279" />
+                  </div>
+                  <div class="field field-year adv-gc3 adv-gr2">
+                    <label for="indexMin">索引年起</label>
+                    <input id="indexMin" type="number" placeholder="—" />
+                  </div>
+                  <div class="field field-year adv-gc1 adv-gr3">
+                    <label for="indexMax">索引年止</label>
+                    <input id="indexMax" type="number" placeholder="—" />
+                  </div>
+                  <div class="field field-year field-addr adv-gc2 adv-gr3">
+                    <label for="indexAddrFilter">索引地址</label>
+                    <input id="indexAddrFilter" type="search" placeholder="地名關鍵詞" />
+                  </div>
+                  <div class="field field-gender adv-gc3 adv-gr3">
+                    <label for="femaleFilter">性別</label>
+                    <select id="femaleFilter">
+                      <option value="">不限</option>
+                      <option value="1">女</option>
+                      <option value="0">男</option>
+                    </select>
+                  </div>
+                  <div class="field field-mode adv-gc1 adv-gr4 adv-row-mode-start">
+                    <label for="advancedMode">進階模式</label>
+                    <select id="advancedMode">
+                      <option value="">常規人物檢索</option>
+                      <option value="posting">按任官查人</option>
+                      <option value="event">按事件查人</option>
+                    </select>
+                  </div>
+                  <div class="field field-year adv-gc2 adv-gr4">
+                    <label for="advYearMin">年份起</label>
+                    <input id="advYearMin" type="number" placeholder="—" />
+                  </div>
+                  <div class="field field-year adv-gc3 adv-gr4">
+                    <label for="advYearMax">年份止</label>
+                    <input id="advYearMax" type="number" placeholder="—" />
+                  </div>
+                  <div class="field field-dynasty adv-gc4 adv-gr4">
+                    <label for="advDynastyFilter">任官朝代</label>
+                    <select id="advDynastyFilter"><option value="">不限</option></select>
+                  </div>
+                </div>
+                <aside class="adv-search-help" aria-label="高級檢索使用方法">
+                  <h4 class="adv-search-help-title">高級檢索使用方法</h4>
+                  <ul class="adv-search-help-list">
+                    <li><strong>關鍵詞</strong>：中文姓名、拼音、別名或人物編號。</li>
+                    <li><strong>朝代／生卒／索引年</strong>：填起迄年縮小範圍；留空表示不限（公元前用負數，如 <code>-221</code>）。</li>
+                    <li><strong>性別、索引地址</strong>：依 CBDB 性別欄與索引地名關鍵詞進一步篩選。</li>
+                    <li><strong>進階模式</strong>：「常規」與上述條件同時生效；「按任官」以上方關鍵詞查官職並可限任官年份、朝代；「按事件」以事件關鍵詞查人並可限事件年份。</li>
+                    <li>須<strong>展開本區</strong>後點「檢索」，進階條件才會套用；捲動檢索結果時面板自動收起，已填內容仍保留，可再次展開修改。</li>
+                  </ul>
+                </aside>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </header>
+
+  <main class="layout">
+    <div id="contextNav" class="context-nav hidden">
+      <button type="button" id="navBackBtn" class="btn sm nav-back-btn">← 返回</button>
+      <nav id="navBreadcrumb" class="nav-breadcrumb" aria-label="瀏覽路徑"></nav>
+    </div>
+    <section id="searchView" class="panel active">
+      <div class="panel-head">
+        <h2>檢索結果</h2>
+        <p id="searchMeta" class="meta">輸入關鍵詞開始檢索</p>
+      </div>
+      <div id="entityPersonsPanel" class="entity-panel hidden">
+        <div class="panel-head inline-head">
+          <h3 id="entityPersonsTitle">相關人物</h3>
+          <button type="button" id="entityPersonsClose" class="btn sm">關閉</button>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr id="entityPersonsHead"><th>#</th><th>中文姓名</th><th>朝代</th><th>生卒</th><th>關聯</th></tr></thead>
+            <tbody id="entityPersonsBody"></tbody>
+          </table>
+        </div>
+        <div class="pager hidden" id="entityPager">
+          <div class="pager-nav">
+            <button type="button" class="btn sm" data-pager-prev disabled>上一頁</button>
+            <span class="pager-info" data-pager-info>—</span>
+            <button type="button" class="btn sm" data-pager-next disabled>下一頁</button>
+          </div>
+          <div class="pager-size-group">
+            <span class="pager-size-label">每頁</span>
+            <div class="pager-size-options" role="group" aria-label="每頁條數">
+              <button type="button" class="btn sm pager-size" data-size="20">20</button>
+              <button type="button" class="btn sm pager-size" data-size="50">50</button>
+              <button type="button" class="btn sm pager-size" data-size="100">100</button>
+              <button type="button" class="btn sm pager-size" data-size="200">200</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr id="searchHeadRow">
+              <th>#</th><th>中文姓名</th><th>姓名</th><th>生卒</th><th>朝代中文名稱</th><th>地址中文名稱</th><th>個人ID</th>
+            </tr>
+          </thead>
+          <tbody id="searchBody"><tr><td colspan="7" class="empty">暫無結果</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pager hidden" id="searchPager">
+        <div class="pager-nav">
+          <button type="button" class="btn sm" data-pager-prev disabled>上一頁</button>
+          <span class="pager-info" data-pager-info>—</span>
+          <button type="button" class="btn sm" data-pager-next disabled>下一頁</button>
+        </div>
+        <div class="pager-size-group">
+          <span class="pager-size-label">每頁</span>
+          <div class="pager-size-options" role="group" aria-label="每頁條數">
+            <button type="button" class="btn sm pager-size" data-size="20">20</button>
+            <button type="button" class="btn sm pager-size" data-size="50">50</button>
+            <button type="button" class="btn sm pager-size" data-size="100">100</button>
+            <button type="button" class="btn sm pager-size" data-size="200">200</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="personView" class="panel">
+      <div id="personHeader" class="person-header placeholder"><p>選擇人物查看傳記模塊</p></div>
+      <div class="biog">
+        <nav id="moduleNav" class="module-nav"></nav>
+        <div class="module-body">
+          <div class="module-head">
+            <h3 id="moduleTitle">基本資料</h3>
+            <span id="moduleCount" class="count"></span>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table kv-mode" id="moduleTable">
+              <thead id="moduleHead"><tr><th>#</th><th>欄位</th><th>內容</th></tr></thead>
+              <tbody id="moduleBody"><tr><td colspan="3" class="empty">選擇模塊</td></tr></tbody>
+            </table>
+          </div>
+          <div class="pager hidden" id="modulePager">
+            <div class="pager-nav">
+              <button type="button" class="btn sm" data-pager-prev disabled>上一頁</button>
+              <span class="pager-info" data-pager-info>—</span>
+              <button type="button" class="btn sm" data-pager-next disabled>下一頁</button>
+            </div>
+            <div class="pager-size-group">
+              <span class="pager-size-label">每頁</span>
+              <div class="pager-size-options" role="group" aria-label="每頁條數">
+                <button type="button" class="btn sm pager-size" data-size="20">20</button>
+                <button type="button" class="btn sm pager-size" data-size="50">50</button>
+                <button type="button" class="btn sm pager-size" data-size="100">100</button>
+                <button type="button" class="btn sm pager-size" data-size="200">200</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>數據：CBDB · CC BY-NC-SA 4.0</span>
+    <span>無需構建知識圖譜，直接查詢 <code>View_PeopleData</code> 等官方視圖</span>
+  </footer>
+
+  <script src="/field-labels.js"></script>
+  <script src="/app.js?v=27"></script>
+</body>
+</html>

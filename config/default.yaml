@@ -1,0 +1,9 @@
+# CBDB Atlas — standalone configuration
+
+cbdb:
+  database: "data/source/cbdb.sqlite3"
+  latest_json_url: "https://raw.githubusercontent.com/cbdb-project/cbdb_sqlite/master/latest.json"
+
+server:
+  host: "127.0.0.1"
+  port: 8770

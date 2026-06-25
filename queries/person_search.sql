@@ -1,0 +1,37 @@
+SELECT DISTINCT
+  p.c_personid,
+  p.c_name,
+  p.c_name_chn,
+  p.c_birthyear,
+  p.c_deathyear,
+  p.c_dynasty_chn,
+  p.c_index_addr_chn,
+  p.c_index_year,
+  p.c_surname_chn,
+  p.c_mingzi_chn
+FROM View_PeopleData p
+LEFT JOIN View_AltnameData a ON a.c_personid = p.c_personid
+WHERE (
+  p.c_name_chn LIKE :pattern
+  OR p.c_name LIKE :pattern
+  OR p.c_surname_chn LIKE :pattern
+  OR p.c_mingzi_chn LIKE :pattern
+  OR a.c_alt_name_chn LIKE :pattern
+  OR a.c_alt_name LIKE :pattern
+  OR CAST(p.c_personid AS TEXT) = :exact_id
+)
+AND (:dynasty_code IS NULL OR p.c_dy = :dynasty_code)
+AND (:birth_min IS NULL OR p.c_birthyear >= :birth_min)
+AND (:birth_max IS NULL OR p.c_birthyear <= :birth_max)
+AND (:death_min IS NULL OR p.c_deathyear >= :death_min)
+AND (:death_max IS NULL OR p.c_deathyear <= :death_max)
+AND (:index_min IS NULL OR p.c_index_year >= :index_min)
+AND (:index_max IS NULL OR p.c_index_year <= :index_max)
+AND (:female IS NULL OR p.c_female = :female)
+AND (:index_addr IS NULL OR p.c_index_addr_chn LIKE :index_addr OR p.c_index_addr_name LIKE :index_addr)
+ORDER BY
+  CASE WHEN p.c_name_chn = :exact THEN 0
+       WHEN p.c_name_chn LIKE :exact_prefix THEN 1
+       ELSE 2 END,
+  p.c_name_chn
+LIMIT :limit OFFSET :offset;

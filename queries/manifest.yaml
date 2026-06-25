@@ -1,0 +1,324 @@
+# Externalized CBDB queries — each maps to an official SQLite view.
+# Edit SQL here; the Python layer only binds parameters and serves results.
+
+queries:
+  stats:
+    file: stats.sql
+    description: 人物總數與視圖就緒狀態
+    view: View_PeopleData
+
+  person_search:
+    file: person_search.sql
+    description: 人物關鍵詞檢索（含別名，View_PeopleData + View_AltnameData）
+    view: View_PeopleData
+    params: [pattern, exact, dynasty_code, birth_min, birth_max, death_min, death_max, index_min, index_max, female, index_addr, limit, offset]
+
+  person_search_count:
+    file: person_search_count.sql
+    description: 人物檢索命中總數（含別名）
+    view: View_PeopleData
+
+  search_place:
+    file: search_place.sql
+    description: 地名檢索（ADDR_CODES）
+    view: ADDR_CODES
+
+  search_place_count:
+    file: search_place_count.sql
+    description: 地名檢索命中總數
+    view: ADDR_CODES
+
+  search_office:
+    file: search_office.sql
+    description: 官職檢索（OFFICE_CODES）
+    view: OFFICE_CODES
+
+  search_office_count:
+    file: search_office_count.sql
+    description: 官職檢索命中總數
+    view: OFFICE_CODES
+
+  search_text:
+    file: search_text.sql
+    description: 文獻題名檢索（TEXT_CODES）
+    view: TEXT_CODES
+
+  search_text_count:
+    file: search_text_count.sql
+    description: 文獻檢索命中總數
+    view: TEXT_CODES
+
+  search_institution:
+    file: search_institution.sql
+    description: 社會機構名稱檢索
+    view: SOCIAL_INSTITUTION_NAME_CODES
+
+  search_institution_count:
+    file: search_institution_count.sql
+    description: 機構檢索命中總數
+    view: SOCIAL_INSTITUTION_NAME_CODES
+
+  search_event:
+    file: search_event.sql
+    description: 事件類型檢索（EVENT_CODES）
+    view: EVENT_CODES
+
+  search_event_count:
+    file: search_event_count.sql
+    description: 事件檢索命中總數
+    view: EVENT_CODES
+
+  person_by_id:
+    file: person_by_id.sql
+    description: 單人基本傳記
+    view: View_PeopleData
+
+  dynasties:
+    file: dynasties.sql
+    description: 朝代列表（按人物數量排序）
+    view: View_PeopleData
+
+  kinship:
+    file: kinship.sql
+    description: 親屬關係
+    view: View_KinAddrData
+
+  posting:
+    file: posting.sql
+    description: 任官記錄
+    view: View_PostingOfficeData
+
+  posting_addr:
+    file: posting_addr.sql
+    description: 任官地點
+    view: View_PostingAddrData
+
+  entry:
+    file: entry.sql
+    description: 入仕途徑
+    view: View_EntryData
+
+  association:
+    file: association.sql
+    description: 社會關係
+    view: View_AssociationData
+
+  biog_address:
+    file: biog_address.sql
+    description: 傳記地址
+    view: View_BiogAddrData
+
+  text_role:
+    file: text_role.sql
+    description: 著述與文獻角色
+    view: View_BiogTextData
+
+  status:
+    file: status.sql
+    description: 社會身份/區分
+    view: View_StatusData
+
+  institution:
+    file: institution.sql
+    description: 社會機構
+    view: View_BiogInstData
+
+  institution_addr:
+    file: institution_addr.sql
+    description: 社會機構地址
+    view: View_BiogInstAddrData
+
+  biog_source:
+    file: biog_source.sql
+    description: 資料出處
+    view: View_BiogSourceData
+
+  event:
+    file: event.sql
+    description: 生平事件
+    view: View_EventData
+
+  event_addr:
+    file: event_addr.sql
+    description: 事件地點
+    view: View_EventAddrData
+
+  people_addr:
+    file: people_addr.sql
+    description: 人物索引地址
+    view: View_PeopleAddrData
+
+  possessions:
+    file: possessions.sql
+    description: 財產
+    view: View_PossessionsData
+
+  possessions_addr:
+    file: possessions_addr.sql
+    description: 財產地點
+    view: View_PossessionsAddrData
+
+  altname:
+    file: altname.sql
+    description: 別名（字、號等）
+    view: View_AltnameData
+
+  merged_person_resolve:
+    file: merged_person_resolve.sql
+    description: 合併人物 ID 解析
+    view: MERGED_PERSON_DATA
+
+  entity_persons_office:
+    file: entity_persons_office.sql
+    description: 官職反查相關人物
+    view: View_PostingOfficeData
+
+  entity_persons_office_count:
+    file: entity_persons_office_count.sql
+    description: 官職反查人物總數
+    view: View_PostingOfficeData
+
+  entity_persons_place:
+    file: entity_persons_place.sql
+    description: 地名反查相關人物
+    view: View_BiogAddrData
+
+  entity_persons_place_count:
+    file: entity_persons_place_count.sql
+    description: 地名反查人物總數
+    view: View_BiogAddrData
+
+  entity_persons_text:
+    file: entity_persons_text.sql
+    description: 文獻反查相關人物
+    view: View_BiogTextData
+
+  entity_persons_text_count:
+    file: entity_persons_text_count.sql
+    description: 文獻反查人物總數
+    view: View_BiogTextData
+
+  entity_persons_institution:
+    file: entity_persons_institution.sql
+    description: 機構反查相關人物
+    view: View_BiogInstData
+
+  entity_persons_institution_count:
+    file: entity_persons_institution_count.sql
+    description: 機構反查人物總數
+    view: View_BiogInstData
+
+  entity_persons_event:
+    file: entity_persons_event.sql
+    description: 事件反查相關人物
+    view: View_EventData
+
+  entity_persons_event_count:
+    file: entity_persons_event_count.sql
+    description: 事件反查人物總數
+    view: View_EventData
+
+  search_persons_by_posting:
+    file: search_persons_by_posting.sql
+    description: 按任官條件查人物
+    view: View_PostingOfficeData
+
+  search_persons_by_posting_count:
+    file: search_persons_by_posting_count.sql
+    description: 按任官查人物總數
+    view: View_PostingOfficeData
+
+  search_persons_by_event:
+    file: search_persons_by_event.sql
+    description: 按事件條件查人物
+    view: View_EventData
+
+  search_persons_by_event_count:
+    file: search_persons_by_event_count.sql
+    description: 按事件查人物總數
+    view: View_EventData
+
+  search_kinship:
+    file: search_kinship.sql
+    description: 親屬關係代碼檢索
+    view: KINSHIP_CODES
+
+  search_kinship_count:
+    file: search_kinship_count.sql
+    description: 親屬關係代碼檢索總數
+    view: KINSHIP_CODES
+
+  search_assoc:
+    file: search_assoc.sql
+    description: 社會關係代碼檢索
+    view: ASSOC_CODES
+
+  search_assoc_count:
+    file: search_assoc_count.sql
+    description: 社會關係代碼檢索總數
+    view: ASSOC_CODES
+
+  search_entry_code:
+    file: search_entry_code.sql
+    description: 入仕途徑代碼檢索
+    view: ENTRY_CODES
+
+  search_entry_code_count:
+    file: search_entry_code_count.sql
+    description: 入仕途徑代碼檢索總數
+    view: ENTRY_CODES
+
+  search_status_code:
+    file: search_status_code.sql
+    description: 社會身份代碼檢索
+    view: STATUS_CODES
+
+  search_status_code_count:
+    file: search_status_code_count.sql
+    description: 社會身份代碼檢索總數
+    view: STATUS_CODES
+
+  search_choronym:
+    file: search_choronym.sql
+    description: 郡望代碼檢索
+    view: CHORONYM_CODES
+
+  search_choronym_count:
+    file: search_choronym_count.sql
+    description: 郡望代碼檢索總數
+    view: CHORONYM_CODES
+
+  search_nianhao:
+    file: search_nianhao.sql
+    description: 年號檢索
+    view: NIAN_HAO
+
+  search_nianhao_count:
+    file: search_nianhao_count.sql
+    description: 年號檢索總數
+    view: NIAN_HAO
+
+  browse_address_children:
+    file: browse_address_children.sql
+    description: 地址下級區劃
+    view: ADDR_BELONGS_DATA
+
+  browse_address_detail:
+    file: browse_address_detail.sql
+    description: 地址層級詳情
+    view: ADDRESSES
+
+  addr_by_id:
+    file: addr_by_id.sql
+    description: 單條地址編碼
+    view: ADDR_CODES
+
+  browse_office_tree:
+    file: browse_office_tree.sql
+    description: 官職類型樹節點
+    view: OFFICE_TYPE_TREE
+
+  browse_office_tree_offices:
+    file: browse_office_tree_offices.sql
+    description: 官職類型樹下官職列表
+    view: OFFICE_CODE_TYPE_REL

@@ -1,0 +1,3 @@
+[submodule "vendor/cbdb_sqlite"]
+	path = vendor/cbdb_sqlite
+	url = https://github.com/cbdb-project/cbdb_sqlite.git
