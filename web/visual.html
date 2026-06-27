@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CBDB Atlas · 可視化檢索</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&family=Noto+Serif+TC:wght@400;600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css?v=103" />
+</head>
+<body class="visual-page">
+  <header class="site-header">
+    <div class="header-bar">
+      <a href="/?home=1" class="brand visual-brand-link" aria-label="返回首頁">
+        <span class="logo" aria-hidden="true">
+          <span class="logo-line">CBDB</span>
+          <span class="logo-line logo-line-sub">Atlas</span>
+        </span>
+        <span class="brand-title">中國歷代人物傳記資料庫</span>
+      </a>
+      <div class="visual-header-actions">
+        <a href="/?home=1" class="visual-home-btn">返回首頁</a>
+      </div>
+    </div>
+    <nav class="visual-tabs" role="tablist" aria-label="可視化檢索模式">
+      <button type="button" class="visual-tab active" data-mode="single" role="tab">人物資料</button>
+      <button type="button" class="visual-tab" data-mode="family" role="tab">家族視圖</button>
+      <button type="button" class="visual-tab" data-mode="circle" role="tab">交游視圖</button>
+      <button type="button" class="visual-tab" data-mode="explore" role="tab">關係探索</button>
+    </nav>
+    <div class="global-loading-bar-slot">
+      <div id="globalLoadingBar" class="global-loading-bar is-idle" role="status" aria-live="polite" aria-busy="false" aria-hidden="true">
+        <div class="global-loading-bar-inner">
+          <div id="globalLoadingBarProgress" class="global-loading-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="載入進度">
+            <div id="globalLoadingBarFill" class="global-loading-bar-fill"></div>
+          </div>
+          <button type="button" class="global-loading-cancel" data-loading-cancel aria-label="取消載入" title="取消載入">×</button>
+        </div>
+        <span id="globalLoadingBarText" class="global-loading-bar-sr">載入中…</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="visual-main">
+    <aside class="visual-controls" aria-label="查詢條件">
+      <div id="indexBanner" class="visual-index-banner hidden"></div>
+
+      <div id="visualPersonSearch" class="visual-person-search">
+        <form id="visualSearchForm" class="search-form visual-search-form">
+          <div class="search-form-basic">
+            <div class="field type-field">
+              <label for="visualSearchType">檢索類型</label>
+              <select id="visualSearchType" name="search_type" disabled aria-readonly="true">
+                <option value="person" selected>人物</option>
+              </select>
+            </div>
+            <div class="field grow keyword-field">
+              <label for="visualSearchInput">姓名</label>
+              <input id="visualSearchInput" type="search" placeholder="姓名、拼音或人物編號" autocomplete="off" />
+            </div>
+            <div class="search-actions">
+              <button type="submit" class="btn primary">檢索</button>
+              <button type="button" id="visualAdvancedToggleBtn" class="btn btn-expand-toggle" aria-expanded="false" aria-controls="visualAdvancedSearchPanel">
+                <span class="expand-toggle-label">高級檢索</span>
+                <span class="expand-toggle-meta">
+                  <span class="expand-toggle-badge hidden" aria-label="已設篩選項數"></span>
+                  <span class="expand-toggle-chevron" aria-hidden="true"></span>
+                </span>
+              </button>
+            </div>
+          </div>
+          <div id="visualAdvancedSearchPanel" class="advanced-search-panel is-collapsed" aria-hidden="true">
+            <div class="advanced-search-inner visual-advanced-inner">
+              <div class="adv-person-grid" aria-label="人物高級檢索條件">
+                <div class="field field-dynasty">
+                  <label for="visualDynastyFilter">朝代</label>
+                  <select id="visualDynastyFilter"><option value="">不限</option></select>
+                </div>
+                <div class="field field-year">
+                  <label for="visualBirthMin">出生年</label>
+                  <input id="visualBirthMin" type="number" placeholder="618" />
+                </div>
+                <div class="field field-year">
+                  <label for="visualDeathMax">卒年</label>
+                  <input id="visualDeathMax" type="number" placeholder="1279" />
+                </div>
+                <div class="field field-addr">
+                  <label for="visualIndexAddrFilter">籍貫</label>
+                  <input id="visualIndexAddrFilter" type="search" placeholder="地名關鍵詞" />
+                </div>
+                <div class="field field-gender">
+                  <label for="visualFemaleFilter">性別</label>
+                  <select id="visualFemaleFilter">
+                    <option value="">不限</option>
+                    <option value="1">女</option>
+                    <option value="0">男</option>
+                  </select>
+                </div>
+                <div class="field field-mode">
+                  <label for="visualAdvancedMode">進階模式</label>
+                  <select id="visualAdvancedMode">
+                    <option value="">常規人物檢索</option>
+                    <option value="posting">按任官查人</option>
+                    <option value="event">按事件查人</option>
+                  </select>
+                </div>
+                <div class="field field-year visual-adv-posting-field hidden">
+                  <label for="visualAdvYearMin">年份起</label>
+                  <input id="visualAdvYearMin" type="number" placeholder="—" />
+                </div>
+                <div class="field field-year visual-adv-posting-field hidden">
+                  <label for="visualAdvYearMax">年份止</label>
+                  <input id="visualAdvYearMax" type="number" placeholder="—" />
+                </div>
+                <div class="field field-dynasty visual-adv-posting-only hidden">
+                  <label for="visualAdvDynastyFilter">任官朝代</label>
+                  <select id="visualAdvDynastyFilter"><option value="">不限</option></select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div id="visualPersonCard" class="visual-person-card hidden">
+        <p class="visual-person-card-label">中心人物</p>
+        <h3 id="visualPersonName" class="visual-person-name">—</h3>
+        <p id="visualPersonMeta" class="meta">—</p>
+        <button type="button" id="visualChangePersonBtn" class="btn sm visual-change-person-btn">更換人物</button>
+      </div>
+
+      <div id="singleControls" class="visual-mode-panel hidden">
+        <p class="visual-mode-hint meta">以中心人物為核心；預設展示 1 步全量關係。「僅親屬／僅社會」會重新載入並只顯示對應類型的 1 步關係。</p>
+        <p id="visualSingleViewStatus" class="visual-single-view-status meta">當前：全量關係圖譜（1 步）</p>
+        <div class="relations-graph-filter-group" role="group" aria-label="人物資料類型">
+          <span class="relations-graph-filter-label">類型</span>
+          <button type="button" class="btn sm visual-single-view" data-view="basic">基本資料</button>
+          <button type="button" class="btn sm visual-single-view" data-view="text">著述</button>
+          <button type="button" class="btn sm visual-single-view" data-view="kinship">僅親屬</button>
+          <button type="button" class="btn sm visual-single-view" data-view="association">僅社會</button>
+        </div>
+      </div>
+
+      <div id="familyControls" class="visual-mode-panel hidden">
+        <p class="visual-mode-hint meta">以中心人物為中心展開親屬網；預設包含旁系並沿配偶延伸，可按郡望／籍貫分區。</p>
+        <div class="field-row">
+          <div class="field"><label for="maxUp">向上代</label><input id="maxUp" type="number" min="0" max="8" value="3" /></div>
+          <div class="field"><label for="maxDown">向下代</label><input id="maxDown" type="number" min="0" max="8" value="3" /></div>
+          <div class="field"><label for="maxCol">旁系深度</label><input id="maxCol" type="number" min="0" max="8" value="3" /></div>
+        </div>
+        <label class="check"><input id="geoLayer" type="checkbox" checked /> 顯示郡望／籍貫分區（地緣節點）</label>
+        <label class="check"><input id="spouseExpand" type="checkbox" checked /> 沿配偶繼續展開</label>
+        <div id="visualFamilyKinCatGroup" class="relations-graph-filter-group" role="group" aria-label="親屬分類">
+          <span class="relations-graph-filter-label">親屬</span>
+          <button type="button" class="btn sm visual-graph-cat active" data-cat-group="kin" data-cat="core" aria-pressed="true">直系×家庭</button>
+          <button type="button" class="btn sm visual-graph-cat active" data-cat-group="kin" data-cat="extended" aria-pressed="true">姻親×旁系</button>
+        </div>
+      </div>
+
+      <div id="circleControls" class="visual-mode-panel hidden">
+        <p class="visual-mode-hint meta">僅社會關係 1–5 步；下方統計交游對象籍貫分布。</p>
+        <div class="relations-graph-filter-group">
+          <span class="relations-graph-filter-label">深度</span>
+          <button type="button" class="btn sm visual-circle-steps active" data-steps="1">1 步</button>
+          <button type="button" class="btn sm visual-circle-steps" data-steps="2">2 步</button>
+          <button type="button" class="btn sm visual-circle-steps" data-steps="3">3 步</button>
+          <button type="button" class="btn sm visual-circle-steps" data-steps="4">4 步</button>
+          <button type="button" class="btn sm visual-circle-steps" data-steps="5">5 步</button>
+        </div>
+        <div id="visualCircleAssocCatGroup" class="relations-graph-filter-group" role="group" aria-label="社會分類">
+          <span class="relations-graph-filter-label">社會</span>
+          <button type="button" class="btn sm visual-graph-cat active" data-cat-group="assoc" data-cat="political" aria-pressed="true">官場政治</button>
+          <button type="button" class="btn sm visual-graph-cat active" data-cat-group="assoc" data-cat="scholarly" aria-pressed="true">師友學術</button>
+          <button type="button" class="btn sm visual-graph-cat" data-cat-group="assoc" data-cat="literary" aria-pressed="false">文學書寫</button>
+          <button type="button" class="btn sm visual-graph-cat" data-cat-group="assoc" data-cat="other" aria-pressed="false">其他社會</button>
+        </div>
+      </div>
+
+      <div id="exploreControls" class="visual-mode-panel hidden">
+        <p class="visual-mode-hint meta">2–10 人兩兩最短路徑（本模式可自由輸入多位人物）。</p>
+        <div class="field">
+          <label for="exploreInput">人物（逗號或換行分隔）</label>
+          <textarea id="exploreInput" rows="4" placeholder="例如：王安石, 蘇軾, 黃庭堅"></textarea>
+        </div>
+        <div class="field"><label for="exploreDepth">最大深度</label><input id="exploreDepth" type="number" min="3" max="8" value="6" /></div>
+        <label class="check"><input id="exploreKin" type="checkbox" checked /> 親屬</label>
+        <label class="check"><input id="exploreAssoc" type="checkbox" checked /> 社會關係</label>
+      </div>
+
+      <button type="button" id="runVisualBtn" class="btn primary visual-run-btn">生成圖譜</button>
+    </aside>
+
+    <section class="visual-graph-section">
+      <div id="visualPickerPanel" class="visual-picker-panel hidden" aria-label="人物檢索結果">
+        <p id="visualSearchMeta" class="meta visual-search-meta">請輸入姓名並檢索，或從結果中點選人物</p>
+        <div class="table-wrap visual-search-table-wrap">
+          <table class="data-table visual-search-table person-search-table" id="visualSearchResultsTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>姓名</th>
+                <th>別名</th>
+                <th>朝代</th>
+                <th>出生年–死亡年</th>
+                <th>籍貫</th>
+                <th>人物ID</th>
+              </tr>
+            </thead>
+            <tbody id="visualSearchBody">
+              <tr><td colspan="7" class="empty">檢索結果將顯示於此</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pager hidden" id="visualSearchPager">
+          <div class="pager-nav">
+            <button type="button" class="btn sm" data-pager-prev disabled>上一頁</button>
+            <span class="pager-info" data-pager-info>—</span>
+            <button type="button" class="btn sm" data-pager-next disabled>下一頁</button>
+          </div>
+        </div>
+      </div>
+      <div class="module-relations-graph visual-graph-panel">
+        <div class="relations-graph-toolbar visual-graph-toolbar">
+          <span id="visualStats" class="meta">—</span>
+          <div class="visual-graph-toolbar-actions">
+            <button type="button" id="visualZoomOutBtn" class="btn sm" title="縮小">−</button>
+            <button type="button" id="visualZoomInBtn" class="btn sm" title="放大">+</button>
+            <button type="button" id="visualFitBtn" class="btn sm" title="適應窗口">適應</button>
+            <button type="button" id="visualExportBtn" class="btn sm" title="匯出 PNG">匯出</button>
+            <button type="button" id="visualFullscreenBtn" class="btn sm" aria-pressed="false">全屏</button>
+          </div>
+        </div>
+        <div class="relations-graph-body">
+          <div id="visualGraphCanvas" class="relations-graph-canvas">
+            <div class="visual-empty-state">
+              <p>檢索並選擇人物，或調整參數後點擊「生成圖譜」</p>
+            </div>
+          </div>
+          <aside id="visualGraphDetail" class="relations-graph-detail">
+            <div class="relations-graph-detail-inner">
+              <p class="meta">點擊節點或連線查看詳情</p>
+            </div>
+          </aside>
+        </div>
+        <div id="addrStatsHost" class="addr-stats-host hidden"></div>
+        <div id="pathListHost" class="path-list-host hidden"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="exploreConfirmModal" class="modal hidden">
+    <div class="dialog">
+      <h2>關係探索 · 計算量提示</h2>
+      <p id="exploreConfirmText"></p>
+      <div class="actions">
+        <button type="button" id="exploreCancelBtn" class="btn">取消</button>
+        <button type="button" id="exploreOkBtn" class="btn primary">開始計算</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastHost" class="toast-host"></div>
+
+  <script src="/loading.js?v=5"></script>
+  <script src="/cbdb-hanzi.js?v=1"></script>
+  <script src="/vendor/cytoscape.min.js?v=1"></script>
+  <script src="/graph-layout.js?v=9"></script>
+  <script src="/graph-edge-schema.js?v=6"></script>
+  <script src="/cbdb-graph.js?v=38"></script>
+  <script src="/graph-shell.js?v=5"></script>
+  <script src="/visual.js?v=21"></script>
+</body>
+</html>

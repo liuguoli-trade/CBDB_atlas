@@ -12,11 +12,10 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-MONO_ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "web" / "field-labels.js"
 
-sys.path.insert(0, str(MONO_ROOT / "scripts"))
-from hanzi_traditional import to_traditional_cn  # noqa: E402
+sys.path.insert(0, str(ROOT))
+from cbdb_atlas.textnorm import to_traditional_cn  # noqa: E402
 
 # UI column -> (codebook sheet, column_code)
 MODULE_FIELDS: dict[str, dict[str, tuple[str, str]]] = {
@@ -66,7 +65,6 @@ MODULE_FIELDS: dict[str, dict[str, tuple[str, str]]] = {
     "altname": {
         "c_alt_name_chn": ("ALTNAME_DATA", "c_alt_name_chn"),
         "c_name_type_desc_chn": ("ALTNAME_CODES", "c_name_type_desc_chn"),
-        "c_sequence": ("ASSOC_DATA", "c_sequence"),
     },
     "kinship": {
         "c_kinrel_chn": ("KINSHIP_CODES", "c_kinrel_chn"),
@@ -79,10 +77,7 @@ MODULE_FIELDS: dict[str, dict[str, tuple[str, str]]] = {
         "c_firstyear": ("POSTED_TO_OFFICE_DATA", "c_firstyear"),
         "c_lastyear": ("POSTED_TO_OFFICE_DATA", "c_lastyear"),
         "c_dynasty_chn": ("DYNASTIES", "c_dynasty_chn"),
-    },
-    "posting_addr": {
-        "c_office_addr_chn": ("ADDR_CODES", "c_name_chn"),
-        "c_office_addr_name": ("ADDR_CODES", "c_name"),
+        "c_posting_places": ("POSTED_TO_ADDR_DATA", "c_addr_id"),
     },
     "entry": {
         "c_entry_desc_chn": ("ENTRY_CODES", "c_entry_desc_chn"),
@@ -250,6 +245,65 @@ def load_codebook(path: Path) -> dict[tuple[str, str], str]:
     return labels
 
 
+def normalize_ui_label(field: str, label: str) -> str:
+    """Shorten common CBDB codebook labels for the web UI."""
+    if label == "朝代中文名稱":
+        return "朝代"
+    if label == "個人ID":
+        return "人物ID"
+    if field == "c_index_addr_chn":
+        return "籍貫"
+    if field == "c_choronym_desc_chn":
+        return "郡望"
+    if label == "出處":
+        return "參考文獻"
+    if label == "地址中文名稱":
+        return "地址"
+    return label
+
+
+def apply_ui_label_overrides(
+    modules: dict[str, dict[str, str]],
+    by_column: dict[str, str],
+) -> None:
+    module_overrides: dict[str, dict[str, str]] = {
+        "entry": {"c_entry_desc_chn": "入仕方式"},
+        "status": {"c_status_desc_chn": "社會狀態"},
+        "biog_address": {"c_addr_desc_chn": "地址類別"},
+        "kinship": {"c_kinrel_chn": "親屬關係類型"},
+        "association": {"c_link_chn": "社會關係類型"},
+        "text_role": {
+            "c_title_chn": "標題",
+            "c_role_desc_chn": "人物在文本編纂中的作用",
+        },
+        "biog_source": {"c_title_chn": "標題"},
+        "institution": {
+            "c_inst_name_hz": "機構名稱",
+            "c_bi_role_chn": "在機構中的角色",
+        },
+        "event": {
+            "c_event_name_chn": "事件名稱",
+            "c_nianhao_chn": "年號",
+        },
+        "possessions": {
+            "c_possession_act_desc_chn": "關係類別",
+            "c_possession_desc_chn": "財產",
+        },
+    }
+    for module, fields in module_overrides.items():
+        if module in modules:
+            modules[module].update(fields)
+
+    for fields in modules.values():
+        for field, label in list(fields.items()):
+            fields[field] = normalize_ui_label(field, label)
+    for field, label in list(by_column.items()):
+        by_column[field] = normalize_ui_label(field, label)
+    posting = modules.get("posting")
+    if posting:
+        posting["c_office_chn"] = "官／署名称"
+
+
 def find_codebook() -> Path:
     downloads = Path.home() / "Downloads"
     candidates = [
@@ -284,6 +338,8 @@ def main() -> int:
     for (_sheet, col), label in labels.items():
         if col not in by_column and label:
             by_column[col] = to_traditional_cn(label)
+
+    apply_ui_label_overrides(modules, by_column)
 
     payload = {
         "source": codebook.name,

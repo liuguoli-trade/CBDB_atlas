@@ -1,0 +1,14 @@
+SELECT 'altname' AS module_key, COUNT(*) AS c FROM View_AltnameData WHERE c_personid = :person_id
+UNION ALL SELECT 'kinship', COUNT(*) FROM View_KinAddrData WHERE c_personid = :person_id
+UNION ALL SELECT 'posting', COUNT(*) FROM View_PostingOfficeData WHERE c_personid = :person_id
+UNION ALL SELECT 'posting_addr', COUNT(*) FROM View_PostingAddrData WHERE c_personid = :person_id
+UNION ALL SELECT 'entry', COUNT(*) FROM View_EntryData WHERE c_personid = :person_id
+UNION ALL SELECT 'association', COUNT(*) FROM View_AssociationData WHERE c_personid = :person_id
+UNION ALL SELECT 'biog_address', COUNT(*) FROM View_BiogAddrData WHERE c_personid = :person_id
+UNION ALL SELECT 'text_role', COUNT(*) FROM View_BiogTextData WHERE c_personid = :person_id
+UNION ALL SELECT 'status', COUNT(*) FROM View_StatusData WHERE c_personid = :person_id
+UNION ALL SELECT 'institution', COUNT(*) FROM View_BiogInstAddrData WHERE c_personid = :person_id
+UNION ALL SELECT 'biog_source', COUNT(*) FROM View_BiogSourceData WHERE c_personid = :person_id
+UNION ALL SELECT 'event', COUNT(*) FROM View_EventFullData WHERE c_personid = :person_id
+UNION ALL SELECT 'people_addr', COUNT(*) FROM View_PeopleAddrData WHERE c_personid = :person_id
+UNION ALL SELECT 'possessions', COUNT(*) FROM View_PossessionsAddrData WHERE c_personid = :person_id;

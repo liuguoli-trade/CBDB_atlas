@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" class="home-active-root">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CBDB Atlas · 歷代人物傳記查詢</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&family=Noto+Serif+TC:wght@400;600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css?v=101" />
 </head>
-<body>
+<body class="home-active">
+  <img id="homeBg" class="home-bg" src="/assets/home-bg.jpg?v=6" alt="" aria-hidden="true" decoding="async" />
   <div id="apiBanner" class="banner hidden"></div>
   <div id="updateModal" class="modal hidden">
     <div class="dialog">
@@ -25,19 +26,19 @@
 
   <header class="site-header">
     <div class="header-bar">
-      <div class="brand">
-        <span class="logo">CBDB</span>
-        <div>
-          <h1>CBDB Atlas</h1>
-          <p class="sub">直查官方 SQLite 視圖 · 查詢邏輯外置在 <code>queries/</code></p>
-        </div>
-      </div>
+      <button type="button" class="brand" id="homeBrandBtn" aria-label="返回首頁">
+        <span class="logo" aria-hidden="true">
+          <span class="logo-line">CBDB</span>
+          <span class="logo-line logo-line-sub">Atlas</span>
+        </span>
+        <span class="brand-title">中國歷代人物傳記資料庫</span>
+      </button>
       <div id="headerStats" class="header-stats">
         <span class="stat-skeleton"></span>
       </div>
     </div>
 
-    <div class="search-panel">
+    <div id="searchPanel" class="search-panel">
       <form id="searchForm" class="search-form">
         <div class="search-form-basic">
           <div class="field type-field">
@@ -58,12 +59,18 @@
             </select>
           </div>
           <div class="field grow keyword-field">
-            <label id="searchInputLabel" for="searchInput">中文姓名</label>
+            <label id="searchInputLabel" for="searchInput">姓名</label>
             <input id="searchInput" type="search" placeholder="姓名、拼音或人物編號" autocomplete="off" />
           </div>
           <div class="search-actions">
             <button type="submit" class="btn primary">檢索</button>
-            <button type="button" id="advancedToggleBtn" class="btn" aria-expanded="false">高級檢索</button>
+            <button type="button" id="advancedToggleBtn" class="btn btn-expand-toggle" aria-expanded="false" aria-controls="advancedSearchPanel">
+              <span class="expand-toggle-label">高級檢索</span>
+              <span class="expand-toggle-meta">
+                <span class="expand-toggle-badge hidden" aria-label="已設篩選項數"></span>
+                <span class="expand-toggle-chevron" aria-hidden="true"></span>
+              </span>
+            </button>
           </div>
         </div>
         <div id="advancedSearchPanel" class="advanced-search-panel is-collapsed" aria-hidden="true">
@@ -77,34 +84,18 @@
                     <select id="dynastyFilter" name="dynasty"><option value="">不限</option></select>
                   </div>
                   <div class="field field-year adv-gc2 adv-gr1">
-                    <label for="birthMin">出生年起</label>
+                    <label for="birthMin">出生年</label>
                     <input id="birthMin" type="number" placeholder="618" />
                   </div>
                   <div class="field field-year adv-gc3 adv-gr1">
-                    <label for="birthMax">出生年止</label>
-                    <input id="birthMax" type="number" placeholder="1911" />
-                  </div>
-                  <div class="field field-year adv-gc1 adv-gr2">
-                    <label for="deathMin">卒年起</label>
-                    <input id="deathMin" type="number" placeholder="960" />
-                  </div>
-                  <div class="field field-year adv-gc2 adv-gr2">
-                    <label for="deathMax">卒年止</label>
+                    <label for="deathMax">卒年</label>
                     <input id="deathMax" type="number" placeholder="1279" />
                   </div>
-                  <div class="field field-year adv-gc3 adv-gr2">
-                    <label for="indexMin">索引年起</label>
-                    <input id="indexMin" type="number" placeholder="—" />
-                  </div>
-                  <div class="field field-year adv-gc1 adv-gr3">
-                    <label for="indexMax">索引年止</label>
-                    <input id="indexMax" type="number" placeholder="—" />
-                  </div>
-                  <div class="field field-year field-addr adv-gc2 adv-gr3">
-                    <label for="indexAddrFilter">索引地址</label>
+                  <div class="field field-addr adv-gc-span2 adv-gr2">
+                    <label for="indexAddrFilter">籍貫</label>
                     <input id="indexAddrFilter" type="search" placeholder="地名關鍵詞" />
                   </div>
-                  <div class="field field-gender adv-gc3 adv-gr3">
+                  <div class="field field-gender adv-gc3 adv-gr2">
                     <label for="femaleFilter">性別</label>
                     <select id="femaleFilter">
                       <option value="">不限</option>
@@ -112,7 +103,7 @@
                       <option value="0">男</option>
                     </select>
                   </div>
-                  <div class="field field-mode adv-gc1 adv-gr4 adv-row-mode-start">
+                  <div class="field field-mode adv-gc1 adv-gr3 adv-row-mode-start">
                     <label for="advancedMode">進階模式</label>
                     <select id="advancedMode">
                       <option value="">常規人物檢索</option>
@@ -120,15 +111,15 @@
                       <option value="event">按事件查人</option>
                     </select>
                   </div>
-                  <div class="field field-year adv-gc2 adv-gr4">
+                  <div class="field field-year adv-gc2 adv-gr3">
                     <label for="advYearMin">年份起</label>
                     <input id="advYearMin" type="number" placeholder="—" />
                   </div>
-                  <div class="field field-year adv-gc3 adv-gr4">
+                  <div class="field field-year adv-gc3 adv-gr3">
                     <label for="advYearMax">年份止</label>
                     <input id="advYearMax" type="number" placeholder="—" />
                   </div>
-                  <div class="field field-dynasty adv-gc4 adv-gr4">
+                  <div class="field field-dynasty adv-gc4 adv-gr3">
                     <label for="advDynastyFilter">任官朝代</label>
                     <select id="advDynastyFilter"><option value="">不限</option></select>
                   </div>
@@ -137,10 +128,54 @@
                   <h4 class="adv-search-help-title">高級檢索使用方法</h4>
                   <ul class="adv-search-help-list">
                     <li><strong>關鍵詞</strong>：中文姓名、拼音、別名或人物編號。</li>
-                    <li><strong>朝代／生卒／索引年</strong>：填起迄年縮小範圍；留空表示不限（公元前用負數，如 <code>-221</code>）。</li>
-                    <li><strong>性別、索引地址</strong>：依 CBDB 性別欄與索引地名關鍵詞進一步篩選。</li>
+                    <li><strong>朝代／出生年／卒年</strong>：填數字縮小範圍；留空表示不限（公元前用負數，如 <code>-221</code>）。出生年表示「不早於該年」，卒年表示「不晚於該年」。</li>
+                    <li><strong>性別、籍貫</strong>：依 CBDB 性別欄與籍貫地名關鍵詞進一步篩選。</li>
                     <li><strong>進階模式</strong>：「常規」與上述條件同時生效；「按任官」以上方關鍵詞查官職並可限任官年份、朝代；「按事件」以事件關鍵詞查人並可限事件年份。</li>
                     <li>須<strong>展開本區</strong>後點「檢索」，進階條件才會套用；捲動檢索結果時面板自動收起，已填內容仍保留，可再次展開修改。</li>
+                  </ul>
+                </aside>
+              </div>
+            </div>
+            <div id="placeAdvancedFilters" class="advanced-type-block hidden">
+              <div class="adv-place-layout">
+                <div class="field field-dynasty">
+                  <label for="placeDynastyFilter">朝代</label>
+                  <select id="placeDynastyFilter" name="place_dynasty"><option value="">不限</option></select>
+                </div>
+                <div class="field field-year">
+                  <label for="placeFirstYear">地址名稱起始年</label>
+                  <input id="placeFirstYear" type="number" placeholder="618" />
+                </div>
+                <div class="field field-year">
+                  <label for="placeLastYear">地址名稱終止年</label>
+                  <input id="placeLastYear" type="number" placeholder="1279" />
+                </div>
+                <aside class="adv-search-help adv-place-help" aria-label="地名高級檢索使用方法">
+                  <h4 class="adv-search-help-title">高級檢索使用方法</h4>
+                  <ul class="adv-search-help-list">
+                    <li><strong>關鍵詞</strong>：中文地名、拼音、別名或地址編號。</li>
+                    <li><strong>朝代</strong>：篩選在該朝代存續期間有效的地名（依地址起迄年與朝代起迄年重疊判定）。</li>
+                    <li><strong>地址名稱起始年／終止年</strong>：依 CBDB 地址起迄年精確篩選；留空表示不限（公元前用負數，如 <code>-221</code>）。</li>
+                  </ul>
+                </aside>
+              </div>
+            </div>
+            <div id="textAdvancedFilters" class="advanced-type-block hidden">
+              <div class="adv-text-layout">
+                <div class="field field-grow">
+                  <label for="textRelatedPersonFilter">相關人物</label>
+                  <input id="textRelatedPersonFilter" type="search" placeholder="姓名、拼音或別名" autocomplete="off" />
+                </div>
+                <div class="field field-dynasty">
+                  <label for="textDynastyFilter">朝代</label>
+                  <select id="textDynastyFilter" name="text_dynasty"><option value="">不限</option></select>
+                </div>
+                <aside class="adv-search-help adv-text-help" aria-label="文獻高級檢索使用方法">
+                  <h4 class="adv-search-help-title">高級檢索使用方法</h4>
+                  <ul class="adv-search-help-list">
+                    <li><strong>關鍵詞</strong>：文獻中文題名、拼音、譯名或文獻編號。</li>
+                    <li><strong>相關人物</strong>：匹配與該文獻在 CBDB 中有著述／參與關係的任一人物姓名（不限具體角色）。</li>
+                    <li><strong>朝代</strong>：依文獻成書朝代篩選。</li>
                   </ul>
                 </aside>
               </div>
@@ -149,6 +184,24 @@
         </div>
       </form>
     </div>
+    <div id="searchContextBar" class="search-context-bar hidden" aria-hidden="true">
+      <button type="button" id="searchContextSummaryBtn" class="search-context-summary" aria-label="返回檢索結果并修改條件">
+        <span id="searchContextText">檢索</span>
+        <span id="searchContextFilterBadge" class="search-context-filter-badge hidden"></span>
+      </button>
+      <button type="button" id="searchContextEditBtn" class="btn sm search-context-edit">修改檢索 ›</button>
+    </div>
+    <div class="global-loading-bar-slot">
+      <div id="globalLoadingBar" class="global-loading-bar is-idle" role="status" aria-live="polite" aria-busy="false" aria-hidden="true">
+        <div class="global-loading-bar-inner">
+          <div id="globalLoadingBarProgress" class="global-loading-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="載入進度">
+            <div id="globalLoadingBarFill" class="global-loading-bar-fill"></div>
+          </div>
+          <button type="button" class="global-loading-cancel" data-loading-cancel aria-label="取消載入" title="取消載入">×</button>
+        </div>
+        <span id="globalLoadingBarText" class="global-loading-bar-sr">載入中…</span>
+      </div>
+    </div>
   </header>
 
   <main class="layout">
@@ -156,7 +209,58 @@
       <button type="button" id="navBackBtn" class="btn sm nav-back-btn">← 返回</button>
       <nav id="navBreadcrumb" class="nav-breadcrumb" aria-label="瀏覽路徑"></nav>
     </div>
-    <section id="searchView" class="panel active">
+    <section id="homeView" class="panel home-view active" aria-label="首頁">
+      <div class="home-view-inner">
+        <div class="home-hero">
+          <p class="home-eyebrow">CBDB Atlas</p>
+          <h1 class="home-title">中國歷代人物傳記資料庫</h1>
+          <form id="homeQuickSearch" class="home-quick-search">
+            <label for="homeQuickInput">快捷人物檢索</label>
+            <div class="home-quick-row">
+              <input id="homeQuickInput" type="search" placeholder="姓名、拼音或人物編號" autocomplete="off" />
+              <button type="submit" class="btn primary">檢索</button>
+              <button type="button" id="homeVisualSearchBtn" class="btn primary">可視化檢索</button>
+            </div>
+          </form>
+        </div>
+        <div class="home-cards" role="list" aria-label="檢索入口">
+          <button type="button" class="home-card" role="listitem" data-search-type="person">
+            <span class="home-card-title">人物</span>
+            <span class="home-card-desc">姓名、別名、朝代、籍貫</span>
+          </button>
+          <button type="button" class="home-card" role="listitem" data-search-type="place">
+            <span class="home-card-title">地名</span>
+            <span class="home-card-desc">歷代政區與地址沿革</span>
+          </button>
+          <button type="button" class="home-card" role="listitem" data-search-type="text">
+            <span class="home-card-title">文獻</span>
+            <span class="home-card-desc">題名、責任者、書目分類</span>
+          </button>
+          <button type="button" class="home-card" role="listitem" data-search-type="office">
+            <span class="home-card-title">官職</span>
+            <span class="home-card-desc">歷代官制與職官名稱</span>
+          </button>
+          <a href="/visual" class="home-card home-card-link" role="listitem">
+            <span class="home-card-title">關係可視化</span>
+            <span class="home-card-desc">人物資料 · 家族 · 交游 · 探索</span>
+          </a>
+          <button type="button" class="home-card" role="listitem" id="homeMoreSearchBtn">
+            <span class="home-card-title">更多檢索</span>
+            <span class="home-card-desc">機構 · 事件 · 代碼表等</span>
+          </button>
+        </div>
+        <footer class="home-art-credit" aria-label="背景圖片說明">
+          <p>
+            背景圖：《山水圖》，李魁，清（1867），設色紙本橫軸（局部），
+            美國紐約大都會藝術博物館藏。
+            圖片依該館 Open Access 政策使用（Public Domain）。
+            <a href="https://www.metmuseum.org/art/collection/search/904732" target="_blank" rel="noopener noreferrer">館藏頁</a>
+          </p>
+        </footer>
+      </div>
+    </section>
+
+    <section id="searchView" class="panel">
       <div class="panel-head">
         <h2>檢索結果</h2>
         <p id="searchMeta" class="meta">輸入關鍵詞開始檢索</p>
@@ -190,13 +294,13 @@
         </div>
       </div>
       <div class="table-wrap">
-        <table class="data-table">
+        <table class="data-table" id="searchResultsTable">
           <thead>
             <tr id="searchHeadRow">
-              <th>#</th><th>中文姓名</th><th>姓名</th><th>生卒</th><th>朝代中文名稱</th><th>地址中文名稱</th><th>個人ID</th>
+              <th>#</th><th>姓名</th><th>別名</th><th>朝代</th><th>出生年–死亡年</th><th>籍貫</th><th>人物ID</th><th>圖譜</th>
             </tr>
           </thead>
-          <tbody id="searchBody"><tr><td colspan="7" class="empty">暫無結果</td></tr></tbody>
+          <tbody id="searchBody"><tr><td colspan="8" class="empty">暫無結果</td></tr></tbody>
         </table>
       </div>
       <div class="pager hidden" id="searchPager">
@@ -223,10 +327,69 @@
         <nav id="moduleNav" class="module-nav"></nav>
         <div class="module-body">
           <div class="module-head">
-            <h3 id="moduleTitle">基本資料</h3>
+            <div class="module-head-left">
+              <h3 id="moduleTitle">基本資料</h3>
+              <div id="moduleRelationsTabs" class="module-relations-tabs hidden" role="tablist" aria-label="人物關係類型"></div>
+            </div>
             <span id="moduleCount" class="count"></span>
           </div>
-          <div class="table-wrap">
+          <div id="moduleRelationsGraph" class="module-relations-graph hidden" aria-label="關係星圖">
+            <div class="relations-graph-toolbar">
+              <div class="relations-graph-filter-group" role="group" aria-label="關係類型">
+                <span class="relations-graph-filter-label">類型</span>
+                <button type="button" class="btn sm relations-graph-filter active" data-graph-kind="all">全部</button>
+                <button type="button" class="btn sm relations-graph-filter" data-graph-kind="kinship">僅親屬</button>
+                <button type="button" class="btn sm relations-graph-filter" data-graph-kind="association">僅社會</button>
+              </div>
+              <div class="relations-graph-filter-group" role="group" aria-label="關係深度">
+                <span class="relations-graph-filter-label">深度</span>
+                <button type="button" class="btn sm relations-graph-steps active" data-graph-steps="1">1 步</button>
+                <button type="button" class="btn sm relations-graph-steps" data-graph-steps="2">2 步</button>
+                <button type="button" class="btn sm relations-graph-steps" data-graph-steps="3">3 步</button>
+                <button type="button" class="btn sm relations-graph-steps" data-graph-steps="4">4 步</button>
+                <button type="button" class="btn sm relations-graph-steps" data-graph-steps="5">5 步</button>
+              </div>
+              <div id="relationsKinCatGroup" class="relations-graph-filter-group" role="group" aria-label="親屬分類">
+                <span class="relations-graph-filter-label">親屬</span>
+                <button type="button" class="btn sm relations-graph-cat active" data-cat-group="kin" data-cat="core" aria-pressed="true">直系×家庭</button>
+                <button type="button" class="btn sm relations-graph-cat active" data-cat-group="kin" data-cat="extended" aria-pressed="true">姻親×旁系</button>
+              </div>
+              <div id="relationsAssocCatGroup" class="relations-graph-filter-group" role="group" aria-label="社會分類">
+                <span class="relations-graph-filter-label">社會</span>
+                <button type="button" class="btn sm relations-graph-cat active" data-cat-group="assoc" data-cat="political" aria-pressed="true">官場政治</button>
+                <button type="button" class="btn sm relations-graph-cat active" data-cat-group="assoc" data-cat="scholarly" aria-pressed="true">師友學術</button>
+                <button type="button" class="btn sm relations-graph-cat active" data-cat-group="assoc" data-cat="literary" aria-pressed="true">文學書寫</button>
+                <button type="button" class="btn sm relations-graph-cat active" data-cat-group="assoc" data-cat="other" aria-pressed="true">其他社會</button>
+              </div>
+              <button type="button" id="relationsGraphFullscreenBtn" class="btn sm" aria-pressed="false" title="全屏顯示關係星圖">全屏</button>
+            </div>
+            <div class="relations-graph-body">
+              <div class="relations-graph-canvas-wrap">
+                <div
+                  id="relationsGraphLoadingBar"
+                  class="relations-graph-loading-bar hidden"
+                  role="progressbar"
+                  aria-label="關係星圖載入進度"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  aria-valuenow="0"
+                  aria-hidden="true"
+                  aria-busy="false"
+                >
+                  <div class="relations-graph-loading-bar-track">
+                    <div id="relationsGraphLoadingBarFill" class="relations-graph-loading-bar-fill"></div>
+                  </div>
+                </div>
+                <div id="relationsGraphCanvas" class="relations-graph-canvas"></div>
+              </div>
+              <aside id="relationsGraphDetail" class="relations-graph-detail">
+                <div class="relations-graph-detail-inner">
+                  <p class="relations-graph-detail-placeholder meta">點擊節點或連線查看詳情</p>
+                </div>
+              </aside>
+            </div>
+          </div>
+          <div id="moduleTableWrap" class="table-wrap">
             <table class="data-table kv-mode" id="moduleTable">
               <thead id="moduleHead"><tr><th>#</th><th>欄位</th><th>內容</th></tr></thead>
               <tbody id="moduleBody"><tr><td colspan="3" class="empty">選擇模塊</td></tr></tbody>
@@ -258,7 +421,12 @@
     <span>無需構建知識圖譜，直接查詢 <code>View_PeopleData</code> 等官方視圖</span>
   </footer>
 
-  <script src="/field-labels.js"></script>
-  <script src="/app.js?v=27"></script>
+  <script src="/loading.js?v=5"></script>
+  <script src="/cbdb-hanzi.js?v=1"></script>
+  <script src="/field-labels.js?v=36"></script>
+  <script src="/graph-layout.js?v=9"></script>
+  <script src="/graph-edge-schema.js?v=6"></script>
+  <script src="/graph-shell.js?v=5"></script>
+  <script src="/app.js?v=101"></script>
 </body>
 </html>

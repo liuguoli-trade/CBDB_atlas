@@ -3,15 +3,15 @@ window.CBDB_FIELD_LABELS = {
   "source": "CBDB 逐表逐栏位介绍( CBDB Codebook).xlsx",
   "modules": {
     "basic": {
-      "c_personid": "個人ID",
+      "c_personid": "人物ID",
       "c_name_chn": "中文姓名",
       "c_name": "姓名",
       "c_birthyear": "出生年",
       "c_deathyear": "死亡年",
-      "c_dynasty_chn": "朝代中文名稱",
+      "c_dynasty_chn": "朝代",
       "c_index_year": "指數年",
       "c_index_addr_chn": "籍貫",
-      "c_choronym_desc_chn": "郡望的中文介紹",
+      "c_choronym_desc_chn": "郡望",
       "c_ethnicity_desc_chn": "中文名稱",
       "c_notes": "備註"
     },
@@ -20,9 +20,9 @@ window.CBDB_FIELD_LABELS = {
       "c_name": "姓名",
       "c_birthyear": "出生年",
       "c_deathyear": "死亡年",
-      "c_dynasty_chn": "朝代中文名稱",
-      "c_index_addr_chn": "地址中文名稱",
-      "c_personid": "個人ID",
+      "c_dynasty_chn": "朝代",
+      "c_index_addr_chn": "籍貫",
+      "c_personid": "人物ID",
       "c_addr_id": "地址ID",
       "c_firstyear": "地址名稱起始年",
       "c_lastyear": "地址名稱終止年",
@@ -47,98 +47,81 @@ window.CBDB_FIELD_LABELS = {
     },
     "altname": {
       "c_alt_name_chn": "別名",
-      "c_name_type_desc_chn": "別名類別",
-      "c_sequence": "關係的順序，如果個人不知道實際日期"
+      "c_name_type_desc_chn": "別名類別"
     },
     "kinship": {
-      "c_kinrel_chn": "不同的親屬關係的中文介紹",
+      "c_kinrel_chn": "親屬關係類型",
       "c_kin_chn": "中文姓名",
-      "c_addr_chn": "地址中文名稱",
+      "c_addr_chn": "地址",
       "c_pages": "頁碼"
     },
     "posting": {
-      "c_office_chn": "官／署的中文名稱",
+      "c_office_chn": "官／署名称",
       "c_firstyear": "始年",
       "c_lastyear": "終年",
-      "c_dynasty_chn": "朝代中文名稱"
-    },
-    "posting_addr": {
-      "c_office_addr_chn": "地址中文名稱",
-      "c_office_addr_name": "地址名稱"
+      "c_dynasty_chn": "朝代",
+      "c_posting_places": "任官地點"
     },
     "entry": {
-      "c_entry_desc_chn": "入仕方式中文介紹",
+      "c_entry_desc_chn": "入仕方式",
       "c_year": "入仕年",
       "c_exam_rank": "考試名次",
-      "c_addr_chn": "地址中文名稱"
+      "c_addr_chn": "地址"
     },
     "association": {
-      "c_link_chn": "社會關係",
+      "c_link_chn": "社會關係類型",
       "c_node_chn": "中文姓名",
       "c_assoc_first_year": "關係的起年",
       "c_occasion_desc_chn": "人們參與的事件"
     },
     "biog_address": {
-      "c_addr_desc_chn": "地址類別的中文介紹",
-      "c_addr_chn": "地址中文名稱",
+      "c_addr_desc_chn": "地址類別",
+      "c_addr_chn": "地址",
       "c_firstyear": "地址名稱起始年",
       "c_lastyear": "地址名稱終止年"
     },
     "text_role": {
-      "c_title_chn": "文本中文標題",
-      "c_role_desc_chn": "對人物在文本編纂中的作用的中文介紹",
+      "c_title_chn": "標題",
+      "c_role_desc_chn": "人物在文本編纂中的作用",
       "c_year": "年份",
       "c_pages": "頁碼"
     },
     "status": {
-      "c_status_desc_chn": "社會狀態的中文介紹",
+      "c_status_desc_chn": "社會狀態",
       "c_firstyear": "始年",
       "c_lastyear": "終年"
     },
     "institution": {
-      "c_inst_name_hz": "機構名稱漢字",
-      "c_bi_role_chn": "個人在機構中的角色中文介紹",
-      "c_bi_begin_year": "始年",
-      "c_bi_end_year": "終年"
-    },
-    "institution_addr": {
-      "c_inst_name_hz": "機構名稱漢字",
-      "c_inst_addr_chn": "地址中文名稱",
-      "c_inst_addr_type_chn": "",
+      "c_inst_name_hz": "機構名稱",
+      "c_bi_role_chn": "在機構中的角色",
+      "c_inst_addr_chn": "地址",
+      "c_inst_addr_type_chn": "地址類別",
       "c_bi_begin_year": "始年",
       "c_bi_end_year": "終年"
     },
     "biog_source": {
-      "c_title_chn": "文本中文標題",
+      "c_title_chn": "標題",
       "c_title": "文本標題",
       "c_pages": "頁碼",
       "c_main_source": "是否爲傳記核心材料"
     },
     "event": {
-      "c_event_name_chn": "重大事件中文名稱",
+      "c_event_name_chn": "事件名稱",
       "c_role": "人在事件中扮演的角色",
+      "c_event_addr_chn": "地址",
       "c_year": "事件發生年",
-      "c_nianhao_chn": "年號的中文名稱"
-    },
-    "event_addr": {
-      "c_event_name_chn": "重大事件中文名稱",
-      "c_event_addr_chn": "地址中文名稱",
-      "c_year": "事件發生年"
+      "c_nianhao_chn": "年號"
     },
     "people_addr": {
-      "c_index_addr_chn": "地址中文名稱",
+      "c_index_addr_chn": "籍貫",
       "c_index_addr_type_chn": "地址類別的中文介紹",
       "c_index_year": "指數年"
     },
     "possessions": {
-      "c_possession_act_desc_chn": "人與物品之間的關係類別的中文介紹",
-      "c_possession_desc_chn": "財產的中文介紹",
+      "c_possession_act_desc_chn": "關係類別",
+      "c_possession_desc_chn": "財產",
+      "c_possession_addr_chn": "地址",
       "c_quantity": "數量",
-      "c_possession_yr": "年份"
-    },
-    "possessions_addr": {
-      "c_possession_desc_chn": "財產的中文介紹",
-      "c_possession_addr_chn": "地址中文名稱",
       "c_possession_yr": "年份"
     }
   },
@@ -146,7 +129,7 @@ window.CBDB_FIELD_LABELS = {
     "c_addr_id": "地址ID",
     "c_addr_cbd": "用於數據庫維護的臨時表",
     "c_name": "地址名稱",
-    "c_name_chn": "地址中文名稱",
+    "c_name_chn": "地址",
     "c_admin_type": "行政區類別",
     "c_firstyear": "地址名稱起始年",
     "c_lastyear": "地址名稱終止年",
@@ -163,7 +146,7 @@ window.CBDB_FIELD_LABELS = {
     "belongs5_ID": "第五層從屬行政區ID",
     "belongs5_Name": "第五層從屬行政區名稱",
     "c_belongs_to": "從屬行政區",
-    "c_source": "出處",
+    "c_source": "參考文獻",
     "c_pages": "頁碼",
     "c_notes": "備註",
     "CHGIS_PT_ID": "中國歷史地理信息系統地點 ID",
@@ -174,7 +157,7 @@ window.CBDB_FIELD_LABELS = {
     "c_name_type_desc": "別名類別的介紹",
     "c_name_type_desc_chn": "別名類別的中文介紹",
     "tts_sysno": "大鐸公司的系統編號",
-    "c_personid": "個人ID",
+    "c_personid": "人物ID",
     "c_alt_name": "個人的別名",
     "c_alt_name_chn": "個人的別名（中文）",
     "c_alt_name_type_code": "別名類別代碼",
@@ -340,10 +323,10 @@ window.CBDB_FIELD_LABELS = {
     "c_db_contact person": "數據庫聯繫人",
     "c_DB_URL_FIRST_STRING": "URL 的第一部分",
     "c_DB_URL_SECOND_STRING": "URL 的第二部分",
-    "c_person_id": "個人ID",
+    "c_person_id": "人物ID",
     "c_db_sys_id": "數據庫系統ID",
     "c_dynasty": "朝代名稱",
-    "c_dynasty_chn": "朝代中文名稱",
+    "c_dynasty_chn": "朝代",
     "c_start": "朝代開始時間",
     "c_end": "朝代結束時間",
     "c_sort": "序號",

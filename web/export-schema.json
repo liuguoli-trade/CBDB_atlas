@@ -1,0 +1,79 @@
+{
+  "moduleOrder": [
+    "basic",
+    "entry",
+    "status",
+    "posting",
+    "biog_address",
+    "kinship",
+    "association",
+    "text_role",
+    "biog_source",
+    "institution",
+    "event",
+    "possessions"
+  ],
+  "moduleLabels": {
+    "basic": "基本資料",
+    "entry": "入仕",
+    "status": "社會身份",
+    "posting": "任官",
+    "biog_address": "傳記地址",
+    "kinship": "親屬",
+    "association": "社會關係",
+    "relations": "人物關係",
+    "text_role": "著述",
+    "biog_source": "資料出處",
+    "institution": "社會機構",
+    "event": "生平事件",
+    "possessions": "財產"
+  },
+  "moduleColumns": {
+    "kinship": ["c_kinrel_chn", "c_kin_chn", "c_addr_chn", "_source", "c_kin_id"],
+    "posting": ["c_office_chn", "c_firstyear", "c_lastyear", "c_posting_places", "_source", "c_office_id"],
+    "entry": ["c_entry_desc_chn", "c_year", "c_exam_rank", "_source"],
+    "association": ["c_link_chn", "c_node_chn", "c_assoc_first_year", "c_occasion_desc_chn", "_source", "c_node_id"],
+    "biog_address": ["c_addr_desc_chn", "c_addr_chn", "c_firstyear", "c_lastyear", "_source", "c_addr_id"],
+    "text_role": ["c_title_chn", "c_role_desc_chn", "c_year", "_source", "c_textid"],
+    "biog_source": ["c_title_chn", "c_title", "c_main_source", "_source", "c_hyperlink"],
+    "status": ["c_status_desc_chn", "c_firstyear", "c_lastyear", "_source"],
+    "institution": [
+      "c_inst_name_hz", "c_bi_role_chn", "c_inst_addr_chn", "c_inst_addr_type_chn",
+      "c_bi_begin_year", "c_bi_end_year", "_source", "c_inst_name_code"
+    ],
+    "event": [
+      "c_event_name_chn", "c_role", "c_event_addr_chn", "c_year", "c_nianhao_chn", "_source",
+      "c_event_code", "c_addr_id"
+    ],
+    "possessions": [
+      "c_possession_act_desc_chn", "c_possession_desc_chn", "c_possession_addr_chn",
+      "c_quantity", "c_possession_yr", "_source", "c_addr_id"
+    ]
+  },
+  "hiddenColumns": [
+    "c_kin_id", "c_node_id", "c_office_id", "c_addr_id", "c_index_addr_id",
+    "c_textid", "c_inst_name_code", "c_event_code", "c_hyperlink"
+  ],
+  "personLinkColumns": {
+    "kinship": [{ "col": "c_kin_chn", "idCol": "c_kin_id" }],
+    "association": [{ "col": "c_node_chn", "idCol": "c_node_id" }]
+  },
+  "externalLinkColumns": {
+    "biog_source": [{ "col": "c_title_chn", "hrefCol": "c_hyperlink" }]
+  },
+  "entityLinkColumns": {
+    "posting": [{ "col": "c_office_chn", "entityType": "office", "idCol": "c_office_id" }],
+    "text_role": [{ "col": "c_title_chn", "entityType": "text", "idCol": "c_textid" }],
+    "institution": [
+      { "col": "c_inst_name_hz", "entityType": "institution", "idCol": "c_inst_name_code" },
+      { "col": "c_inst_addr_chn", "entityType": "place", "idCol": "c_inst_addr_id" }
+    ],
+    "event": [
+      { "col": "c_event_name_chn", "entityType": "event", "idCol": "c_event_code" },
+      { "col": "c_event_addr_chn", "entityType": "place", "idCol": "c_addr_id" }
+    ],
+    "possessions": [{ "col": "c_possession_addr_chn", "entityType": "place", "idCol": "c_addr_id" }],
+    "biog_address": [{ "col": "c_addr_chn", "entityType": "place", "idCol": "c_addr_id" }]
+  },
+  "exportExcludeModules": ["graph", "relations"]
+}

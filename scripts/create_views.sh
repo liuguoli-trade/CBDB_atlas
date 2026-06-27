@@ -570,6 +570,66 @@ LEFT JOIN TEXT_CODES AS texts
 SQL
 echo "Finished view View_EventData."
 
+# View_EventFullData: events (EVENTS_DATA) with optional place rows (EVENTS_ADDR).
+echo "Creating view View_EventFullData..."
+sqlite3 "$DB_PATH" <<'SQL'
+DROP VIEW IF EXISTS View_EventFullData;
+CREATE VIEW View_EventFullData AS
+SELECT
+    ed.c_personid,
+    person.c_name,
+    person.c_name_chn,
+    ed.c_sequence,
+    ed.c_event_code,
+    event_codes.c_event_name_chn,
+    event_codes.c_event_name,
+    ed.c_role,
+    ed.c_year,
+    ed.c_nh_code,
+    nh.c_nianhao_chn,
+    nh.c_nianhao_pin,
+    ed.c_nh_year,
+    ed.c_yr_range,
+    range_codes.c_range,
+    range_codes.c_range_chn,
+    ed.c_intercalary,
+    ed.c_month,
+    ed.c_day,
+    ed.c_day_ganzhi,
+    gz.c_ganzhi_chn AS c_event_day_gz_chn,
+    gz.c_ganzhi_py AS c_event_day_gz_py,
+    ed.c_source,
+    texts.c_title AS c_source_title,
+    texts.c_title_chn AS c_source_chn,
+    ed.c_pages,
+    ed.c_notes,
+    ea.c_addr_id,
+    addr.c_name AS c_event_addr_name,
+    addr.c_name_chn AS c_event_addr_chn,
+    addr.x_coord AS c_event_xcoord,
+    addr.y_coord AS c_event_ycoord
+FROM EVENTS_DATA AS ed
+INNER JOIN EVENT_CODES AS event_codes
+    ON event_codes.c_event_code = ed.c_event_code
+INNER JOIN BIOG_MAIN AS person
+    ON person.c_personid = ed.c_personid
+LEFT JOIN EVENTS_ADDR AS ea
+    ON ea.c_personid = ed.c_personid
+   AND ea.c_sequence = ed.c_sequence
+   AND ea.c_event_code = ed.c_event_code
+LEFT JOIN ADDR_CODES AS addr
+    ON addr.c_addr_id = ea.c_addr_id
+LEFT JOIN NIAN_HAO AS nh
+    ON nh.c_nianhao_id = ed.c_nh_code
+LEFT JOIN YEAR_RANGE_CODES AS range_codes
+    ON range_codes.c_range_code = ed.c_yr_range
+LEFT JOIN GANZHI_CODES AS gz
+    ON gz.c_ganzhi_code = ed.c_day_ganzhi
+LEFT JOIN TEXT_CODES AS texts
+    ON texts.c_textid = ed.c_source;
+SQL
+echo "Finished view View_EventFullData."
+
 # View_KinAddrData: exposes kin relations with address and citation data.
 echo "Creating view View_KinAddrData..."
 sqlite3 "$DB_PATH" <<'SQL'
@@ -585,6 +645,11 @@ SELECT
     kd.c_kin_code,
     kin_codes.c_kinrel,
     kin_codes.c_kinrel_chn,
+    kin_codes.c_upstep,
+    kin_codes.c_dwnstep,
+    kin_codes.c_colstep,
+    kin_codes.c_marstep,
+    kin_codes.c_pick_sorting,
     NULL AS c_addr_name,
     NULL AS c_addr_chn,
     kd.c_source,
@@ -642,6 +707,7 @@ SELECT
     bm.c_by_nh_code,
     by_nh.c_nianhao_chn AS c_by_nh_chn,
     by_nh.c_nianhao_pin AS c_by_nh_py,
+    by_nh.c_dynasty_chn AS c_by_dynasty_chn,
     bm.c_by_nh_year,
     bm.c_by_range,
     by_range.c_range AS c_by_range_desc,
@@ -650,6 +716,7 @@ SELECT
     bm.c_dy_nh_code,
     dy_nh.c_nianhao_chn AS c_dy_nh_chn,
     dy_nh.c_nianhao_pin AS c_dy_nh_py,
+    dy_nh.c_dynasty_chn AS c_dy_nh_dynasty_chn,
     bm.c_dy_nh_year,
     bm.c_dy_range,
     dy_range.c_range AS c_dy_range_desc,
@@ -1012,6 +1079,7 @@ VIEWS=(
     "View_EntryData"
     "View_EventAddrData"
     "View_EventData"
+    "View_EventFullData"
     "View_KinAddrData"
     "View_PeopleData"
     "View_PeopleAddrData"

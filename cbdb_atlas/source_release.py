@@ -180,6 +180,12 @@ def local_sha256(db_path: Path, manifest: dict[str, Any] | None) -> str | None:
         return None
 
 
+PEOPLE_VIEW_NIANHAO_DYNASTY_COLS = frozenset({"c_by_dynasty_chn", "c_dy_nh_dynasty_chn"})
+KIN_VIEW_SORT_COLS = frozenset(
+    {"c_upstep", "c_dwnstep", "c_colstep", "c_marstep", "c_pick_sorting"}
+)
+
+
 def has_required_views(db_path: Path) -> bool:
     try:
         conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
@@ -192,16 +198,106 @@ def has_required_views(db_path: Path) -> bool:
         return False
 
 
-def ensure_cbdb_views(db_path: Path, project_root: Path) -> None:
-    if has_required_views(db_path):
-        return
+def people_view_has_nianhao_dynasty(db_path: Path) -> bool:
+    if not has_required_views(db_path):
+        return False
+    try:
+        conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+        cols = {
+            row[1]
+            for row in conn.execute("PRAGMA table_info(View_PeopleData)").fetchall()
+        }
+        conn.close()
+        return PEOPLE_VIEW_NIANHAO_DYNASTY_COLS.issubset(cols)
+    except sqlite3.Error:
+        return False
+
+
+def _create_views_script(project_root: Path) -> Path:
     from cbdb_atlas.upstream import upstream_create_views_script
 
-    script = upstream_create_views_script(project_root) or (project_root / "scripts" / "create_views.sh")
+    script = upstream_create_views_script(project_root) or (
+        project_root / "scripts" / "create_views.sh"
+    )
     if not script.is_file():
         raise RuntimeError(
-            f"CBDB 缺少查詢視圖。請運行: bash scripts/create_views.sh {db_path}"
+            f"CBDB 缺少查詢視圖。請運行: bash scripts/create_views.sh <database>"
         )
+    return script
+
+
+def _extract_view_sql(project_root: Path, view_name: str, finished_echo: str) -> str:
+    script = _create_views_script(project_root)
+    text = script.read_text(encoding="utf-8")
+    marker = f"DROP VIEW IF EXISTS {view_name};"
+    start = text.index(marker)
+    end = text.index(finished_echo, start)
+    block = text[start:end]
+    lines = [
+        line
+        for line in block.splitlines()
+        if line.strip() not in ("SQL", "<<'SQL'", "<<SQL")
+    ]
+    return "\n".join(lines)
+
+
+def _extract_people_view_sql(project_root: Path) -> str:
+    return _extract_view_sql(
+        project_root,
+        "View_PeopleData",
+        'echo "Finished view View_PeopleData."',
+    )
+
+
+def kin_view_has_sort_columns(db_path: Path) -> bool:
+    if not has_required_views(db_path):
+        return False
+    try:
+        conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+        cols = {
+            row[1]
+            for row in conn.execute("PRAGMA table_info(View_KinAddrData)").fetchall()
+        }
+        conn.close()
+        return KIN_VIEW_SORT_COLS.issubset(cols)
+    except sqlite3.Error:
+        return False
+
+
+def _extract_kinaddr_view_sql(project_root: Path) -> str:
+    return _extract_view_sql(
+        project_root,
+        "View_KinAddrData",
+        'echo "Finished view View_KinAddrData."',
+    )
+
+
+def _apply_kinaddr_view_sql(db_path: Path, project_root: Path) -> None:
+    sql = _extract_kinaddr_view_sql(project_root)
+    conn = sqlite3.connect(db_path)
+    try:
+        conn.executescript(sql)
+        conn.commit()
+    finally:
+        conn.close()
+    if not kin_view_has_sort_columns(db_path):
+        raise RuntimeError("無法更新 View_KinAddrData（缺少親屬排序欄位）")
+
+
+def _apply_people_view_sql(db_path: Path, project_root: Path) -> None:
+    sql = _extract_people_view_sql(project_root)
+    conn = sqlite3.connect(db_path)
+    try:
+        conn.executescript(sql)
+        conn.commit()
+    finally:
+        conn.close()
+    if not people_view_has_nianhao_dynasty(db_path):
+        raise RuntimeError("無法更新 View_PeopleData（缺少年號朝代欄位）")
+
+
+def _run_create_views_shell(db_path: Path, project_root: Path) -> None:
+    script = _create_views_script(project_root)
     for cmd in (["bash", str(script), str(db_path)], ["sh", str(script), str(db_path)]):
         try:
             subprocess.run(cmd, check=True, capture_output=True, text=True)
@@ -210,6 +306,15 @@ def ensure_cbdb_views(db_path: Path, project_root: Path) -> None:
         except (FileNotFoundError, subprocess.CalledProcessError):
             continue
     raise RuntimeError("無法創建 CBDB 視圖，請手動運行 create_views.sh")
+
+
+def ensure_cbdb_views(db_path: Path, project_root: Path) -> None:
+    if not has_required_views(db_path):
+        _run_create_views_shell(db_path, project_root)
+    if not people_view_has_nianhao_dynasty(db_path):
+        _apply_people_view_sql(db_path, project_root)
+    if not kin_view_has_sort_columns(db_path):
+        _apply_kinaddr_view_sql(db_path, project_root)
 
 
 def source_status(

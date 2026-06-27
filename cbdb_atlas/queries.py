@@ -11,7 +11,8 @@ class QueryRegistry:
 
     def __init__(self, queries_dir: Path) -> None:
         self.queries_dir = queries_dir
-        self._cache: dict[str, str] = {}
+        # name -> (mtime, sql)
+        self._cache: dict[str, tuple[float, str]] = {}
         manifest_path = queries_dir / "manifest.yaml"
         self.manifest: dict[str, Any] = {}
         if manifest_path.is_file():
@@ -25,8 +26,6 @@ class QueryRegistry:
         return items
 
     def get_sql(self, name: str) -> str:
-        if name in self._cache:
-            return self._cache[name]
         meta = (self.manifest.get("queries") or {}).get(name)
         if meta and meta.get("file"):
             path = self.queries_dir / meta["file"]
@@ -34,8 +33,12 @@ class QueryRegistry:
             path = self.queries_dir / f"{name}.sql"
         if not path.is_file():
             raise KeyError(f"Query not found: {name}")
+        mtime = path.stat().st_mtime
+        cached = self._cache.get(name)
+        if cached and cached[0] == mtime:
+            return cached[1]
         sql = path.read_text(encoding="utf-8").strip()
-        self._cache[name] = sql
+        self._cache[name] = (mtime, sql)
         return sql
 
     def get_source(self, name: str) -> str:

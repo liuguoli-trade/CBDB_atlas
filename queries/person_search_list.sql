@@ -2,13 +2,16 @@ SELECT DISTINCT
   p.c_personid,
   p.c_name,
   p.c_name_chn,
+  NULL AS c_alt_names,
   p.c_birthyear,
   p.c_deathyear,
   p.c_dynasty_chn,
   p.c_index_addr_chn,
   p.c_index_year,
   p.c_surname_chn,
-  p.c_mingzi_chn
+  p.c_mingzi_chn,
+  p.c_surname_proper,
+  p.c_mingzi_proper
 FROM View_PeopleData p
 LEFT JOIN View_AltnameData a ON a.c_personid = p.c_personid
 WHERE (

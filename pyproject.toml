@@ -3,6 +3,7 @@ name = "cbdb-atlas"
 version = "0.1.0"
 description = "CBDB Atlas — web browser for CBDB SQLite views with externalized SQL queries"
 readme = "README.md"
+license = { text = "CC BY-NC-SA 4.0" }
 requires-python = ">=3.10"
 dependencies = [
   "fastapi>=0.110",
@@ -10,6 +11,12 @@ dependencies = [
   "pyyaml>=6.0",
   "pydantic>=2.0",
   "openpyxl>=3.1",
+  "opencc-python-reimplemented>=0.1.7",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
 ]
 
 [project.scripts]

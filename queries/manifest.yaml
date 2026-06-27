@@ -8,14 +8,30 @@ queries:
     view: View_PeopleData
 
   person_search:
-    file: person_search.sql
-    description: 人物關鍵詞檢索（含別名，View_PeopleData + View_AltnameData）
+    file: person_search_list.sql
+    description: 人物關鍵詞檢索（輕量列表，別名後置 enrichment）
     view: View_PeopleData
-    params: [pattern, exact, dynasty_code, birth_min, birth_max, death_min, death_max, index_min, index_max, female, index_addr, limit, offset]
+    params: [pattern, exact, exact_prefix, exact_id, dynasty_code, birth_min, birth_max, death_min, death_max, index_min, index_max, female, index_addr, limit, offset]
+
+  person_search_list:
+    file: person_search_list.sql
+    description: 人物關鍵詞檢索列表（不含別名子查詢）
+    view: View_PeopleData
+
+  module_counts:
+    file: module_counts.sql
+    description: 單次 UNION ALL 統計各模組行數
+    view: View_PeopleData
+    params: [person_id]
 
   person_search_count:
     file: person_search_count.sql
     description: 人物檢索命中總數（含別名）
+    view: View_PeopleData
+
+  person_search_count_lite:
+    file: person_search_count_lite.sql
+    description: 人物檢索命中總數（主字段，不含別名 JOIN）
     view: View_PeopleData
 
   search_place:
@@ -85,7 +101,7 @@ queries:
 
   posting:
     file: posting.sql
-    description: 任官記錄
+    description: 任官記錄（含任官地點，按 c_posting_id 聚合）
     view: View_PostingOfficeData
 
   posting_addr:

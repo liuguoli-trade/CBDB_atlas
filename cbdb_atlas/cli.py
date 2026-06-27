@@ -257,7 +257,7 @@ def main() -> int:
         if args.open_only:
             if wait_for_probe(h, p, retries=2, delay=0.3) is None:
                 print(f"[cbdb-atlas] 服務未運行：{url}")
-                print("[cbdb-atlas] 請雙擊「啟動CBDB_atlas.bat」，或運行 python run.py")
+                print("[cbdb-atlas] 請雙擊 start_cbdb_atlas.bat，或運行 python run.py")
                 return 1
             print(f"[cbdb-atlas] 已連接現有服務 → {url}")
             open_browser_tab(h, p)
@@ -282,7 +282,7 @@ def main() -> int:
 
         ensure_source()
         print(f"[cbdb-atlas] 正在啟動服務 → {url}")
-        print("[cbdb-atlas] 關閉本窗口即停止服務；可將「啟動CBDB_atlas.bat」固定到任務欄。")
+        print("[cbdb-atlas] 關閉本窗口即停止服務；可將 start_cbdb_atlas.bat 固定到任務欄。")
         serve(host=h, port=p, open_browser=not args.no_browser)
     except KeyboardInterrupt:
         print("\n已停止。")

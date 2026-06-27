@@ -14,11 +14,29 @@ data/source/*.new
 data/source/manifest.json
 data/source/update_dismissed.json
 
-# Runtime / local state
-data/local/
+# Runtime / local state (graph/search FTS indexes)
+data/local/*
+!data/local/.gitkeep
 
-# OS / editor
-.DS_Store
+# Home background build intermediates (committed: home-bg.jpg)
+web/assets/home-bg-o2.jpg
+
+# Generated field labels duplicate (source: scripts/generate_field_labels.py → field-labels.js)
+web/field-labels.json
+
+# Test caches
+.pytest_cache/
+pytest-cache-files-*/
+
+# Optional CBDB UniFonts (see web/fonts/README.md)
+web/fonts/*.ttf
+web/fonts/*.otf
+web/fonts/*.woff
+web/fonts/*.woff2
+
 Thumbs.db
+.DS_Store
+*.log
+
 .idea/
 .vscode/
