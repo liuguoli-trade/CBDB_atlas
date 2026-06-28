@@ -3,14 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="CBDB Atlas — 在瀏覽器中查詢中國歷代人物傳記資料庫（CBDB）的本地 Web 應用。" />
-  <title>CBDB Atlas · 中國歷代人物傳記資料庫</title>
+  <meta name="description" content="CBDB Atlas — 為何 GitHub Pages 無法託管完整應用，以及如何本地或雲端使用。" />
+  <title>CBDB Atlas · 部署說明</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
       --brand: #1a5f7a;
       --brand-dark: #134555;
+      --warn: #8b2e2e;
+      --warn-bg: #fdf3f3;
       --bg: #f4f7f9;
       --card: #fff;
       --border: #d8e2e8;
@@ -21,15 +23,8 @@
       --font-ui: "Source Sans 3", system-ui, sans-serif;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: var(--font-body);
-      background: var(--bg);
-      color: var(--ink);
-      line-height: 1.7;
-      min-height: 100vh;
-    }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--ink); line-height: 1.7; }
     a { color: var(--brand); }
-    a:hover { color: var(--brand-dark); }
     code {
       font-family: var(--font-ui);
       font-size: 0.88em;
@@ -40,219 +35,139 @@
     .site-header {
       background: linear-gradient(180deg, var(--brand), var(--brand-dark));
       color: #fff;
-      padding: 2.5rem 1.25rem 2rem;
+      padding: 2.25rem 1.25rem 1.75rem;
     }
-    .header-inner {
-      max-width: 880px;
-      margin: 0 auto;
-    }
-    .logo-row {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-    .logo {
-      width: 56px;
-      height: 48px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid rgba(255,255,255,.75);
-      border-radius: 4px;
-      font-family: var(--font-ui);
-      font-weight: 600;
-      font-size: 0.72rem;
-      line-height: 1.15;
-      letter-spacing: 0.04em;
-      flex-shrink: 0;
-    }
-    .logo-sub { font-size: 0.62rem; opacity: 0.9; }
-    h1 {
-      font-size: clamp(1.5rem, 4vw, 2rem);
-      font-weight: 600;
-      line-height: 1.35;
-    }
-    .tagline {
-      font-family: var(--font-ui);
-      font-size: 1.05rem;
-      opacity: 0.92;
-      max-width: 42rem;
-    }
-    .notice {
-      margin-top: 1.25rem;
-      padding: 0.75rem 1rem;
-      background: rgba(255,255,255,.12);
-      border: 1px solid rgba(255,255,255,.25);
-      border-radius: var(--radius);
-      font-family: var(--font-ui);
-      font-size: 0.9rem;
-    }
-    main {
-      max-width: 880px;
-      margin: 0 auto;
-      padding: 2rem 1.25rem 3rem;
-    }
+    .header-inner, main, footer { max-width: 880px; margin: 0 auto; }
+    h1 { font-size: clamp(1.45rem, 4vw, 1.95rem); margin-bottom: 0.65rem; }
+    .tagline { font-family: var(--font-ui); opacity: 0.92; max-width: 44rem; }
+    main { padding: 2rem 1.25rem 2.5rem; }
     section {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 1.5rem 1.25rem;
-      margin-bottom: 1.25rem;
+      padding: 1.35rem 1.2rem;
+      margin-bottom: 1rem;
     }
-    h2 {
-      font-size: 1.2rem;
-      margin-bottom: 0.75rem;
-      color: var(--brand-dark);
-    }
-    h3 {
-      font-family: var(--font-ui);
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin: 1.1rem 0 0.5rem;
-      color: var(--ink);
-    }
-    p, li { color: var(--ink); }
-    .muted { color: var(--ink-muted); font-family: var(--font-ui); font-size: 0.92rem; }
-    ul { padding-left: 1.25rem; }
+    h2 { font-size: 1.15rem; color: var(--brand-dark); margin-bottom: 0.65rem; }
+    h3 { font-family: var(--font-ui); font-size: 0.95rem; margin: 1rem 0 0.45rem; }
+    p, li { font-size: 0.98rem; }
+    ul, ol { padding-left: 1.25rem; }
     li + li { margin-top: 0.35rem; }
-    ol.steps { padding-left: 1.35rem; }
-    ol.steps li { margin-top: 0.6rem; }
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 0.75rem;
-      list-style: none;
-      padding: 0;
+    .muted { color: var(--ink-muted); font-family: var(--font-ui); font-size: 0.92rem; }
+    .alert {
+      border: 1px solid #e8c4c4;
+      background: var(--warn-bg);
+      color: var(--warn);
+      padding: 0.9rem 1rem;
+      border-radius: var(--radius);
+      font-family: var(--font-ui);
+      font-size: 0.92rem;
+      margin-bottom: 1rem;
     }
-    .features li {
-      padding: 0.85rem 1rem;
-      background: var(--bg);
+    .diagram {
+      font-family: var(--font-ui);
+      font-size: 0.88rem;
+      background: #eef3f6;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      font-size: 0.95rem;
+      padding: 0.85rem 1rem;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.5;
+      margin: 0.75rem 0;
     }
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.65rem;
-      margin-top: 1rem;
-    }
+    .actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.85rem; }
     .btn {
       display: inline-block;
       font-family: var(--font-ui);
       font-size: 0.92rem;
       font-weight: 600;
       text-decoration: none;
-      padding: 0.55rem 1.1rem;
+      padding: 0.55rem 1rem;
       border-radius: var(--radius);
       border: 1px solid var(--border);
       background: var(--card);
       color: var(--brand-dark);
     }
-    .btn.primary {
-      background: var(--brand);
-      border-color: var(--brand);
-      color: #fff;
-    }
-    .btn.primary:hover { background: var(--brand-dark); color: #fff; }
-    .btn:hover { border-color: var(--brand); }
+    .btn.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
     footer {
-      max-width: 880px;
-      margin: 0 auto;
       padding: 0 1.25rem 2.5rem;
       font-family: var(--font-ui);
       font-size: 0.85rem;
       color: var(--ink-muted);
     }
-    footer p + p { margin-top: 0.5rem; }
   </style>
 </head>
 <body>
   <header class="site-header">
     <div class="header-inner">
-      <div class="logo-row">
-        <div class="logo" aria-hidden="true">
-          <span>CBDB</span>
-          <span class="logo-sub">Atlas</span>
-        </div>
-        <h1>中國歷代人物傳記資料庫</h1>
-      </div>
+      <h1>CBDB Atlas · 部署說明</h1>
       <p class="tagline">
-        在瀏覽器中直接查詢 CBDB SQLite 資料的本地 Web 應用——無需繁複環境配置，讓人物、地名與關係檢索盡可能開箱可用。
-      </p>
-      <p class="notice">
-        本頁為項目介紹站。完整應用需在本地執行 <code>python run.py</code> 後，於瀏覽器開啟
-        <code>http://127.0.0.1:8770</code> 使用。
+        本頁說明為何 GitHub Pages 無法提供與 <code>start_cbdb_atlas.bat</code> 相同的完整功能，
+        以及如何在本地或雲端正確使用本應用。
       </p>
     </div>
   </header>
 
   <main>
+    <div class="alert">
+      <strong>重要：</strong>GitHub Pages 只能託管靜態 HTML/CSS/JS，無法執行 Python、FastAPI 或 SQLite。
+      因此 <code>https://liuguoli-trade.github.io/CBDB_atlas/</code> <strong>不能</strong>替代
+      雙擊 <code>start_cbdb_atlas.bat</code> 後開啟的完整界面與全部操作。
+    </div>
+
     <section>
-      <h2>關於 CBDB Atlas</h2>
+      <h2>本地運行時的架構</h2>
+      <p>雙擊 <code>start_cbdb_atlas.bat</code> 實際執行的是 <code>python run.py</code>，會在本機啟動：</p>
+      <div class="diagram">瀏覽器  ←→  FastAPI 後端（Python）  ←→  CBDB SQLite 資料庫
+         ↑              ↑                        ↑
+    web/index.html   /api/* 接口           cbdb.sqlite3 + 索引</div>
       <p>
-        <a href="https://cbdb.hsites.harvard.edu/" target="_blank" rel="noopener">中國歷代人物傳記資料庫（CBDB）</a>
-        是面向中國歷史研究的結構化傳記資料庫。CBDB Atlas 將查詢邏輯外置於
-        <code>queries/</code>，在本地以 Web 界面提供人物檢索、傳記詳情、關係可視化與 Excel 匯出等功能。
+        人物檢索、傳記詳情、關係可視化、Excel 匯出、資料更新等<strong>所有功能</strong>都依賴後端 API 與本地資料庫。
+        僅把 <code>web/</code> 目錄放到 GitHub Pages，API 請求會失敗，應用無法正常工作。
+      </p>
+    </section>
+
+    <section>
+      <h2>方案一：本地使用（推薦，與 start_cbdb_atlas 相同）</h2>
+      <ol>
+        <li>克隆：<code>git clone https://github.com/liuguoli-trade/CBDB_atlas.git</code></li>
+        <li>安裝：<code>pip install -e ".[dev]"</code></li>
+        <li>雙擊 <code>start_cbdb_atlas.bat</code>，或執行 <code>python run.py</code></li>
+        <li>瀏覽器開啟 <code>http://127.0.0.1:8770</code></li>
+        <li>首次使用在網頁點「更新資料」下載 CBDB，或手動放入 <code>data/source/cbdb.sqlite3</code></li>
+      </ol>
+      <p class="muted">這是項目設計的使用方式，支持全部功能。</p>
+    </section>
+
+    <section>
+      <h2>方案二：雲端託管完整應用（公開 URL + 全部操作）</h2>
+      <p>
+        若需要一個公開網址、且支持與本地相同的全部操作，必須託管<strong>整個應用</strong>（前端 + Python 後端 + 資料庫），
+        而不是 GitHub Pages。本倉庫已提供 Docker / Render 配置：
+      </p>
+      <ol>
+        <li>在 <a href="https://render.com/" target="_blank" rel="noopener">Render</a> 新建 Web Service，連接本 GitHub 倉庫</li>
+        <li>選擇使用倉庫中的 <code>render.yaml</code>（Docker 部署）</li>
+        <li>部署完成後，在 Render 提供的 HTTPS 地址使用完整應用</li>
+        <li>首次啟動需在網頁中下載 CBDB 資料（體積較大，需足夠磁碟與記憶體）</li>
+      </ol>
+      <p class="muted">
+        注意：CBDB 資料庫體積大，免費雲端方案可能磁碟/記憶體不足；非商業研究用途須符合 CBDB 許可。
       </p>
       <div class="actions">
         <a class="btn primary" href="https://github.com/liuguoli-trade/CBDB_atlas" target="_blank" rel="noopener">GitHub 源碼</a>
-        <a class="btn" href="https://github.com/cbdb-project/cbdb_sqlite" target="_blank" rel="noopener">CBDB SQLite 官方發布</a>
       </div>
     </section>
 
     <section>
-      <h2>主要功能</h2>
-      <ul class="features">
-        <li>人物、地名等多類型檢索與傳記詳情</li>
-        <li>關係可視化（單人、家族、交游、關係探索）</li>
-        <li>網頁一鍵下載並校驗官方 CBDB 資料</li>
-        <li>人物詳情匯出 Excel</li>
+      <h2>GitHub Pages 適合做什麼？</h2>
+      <ul>
+        <li>項目介紹、安裝說明（即本頁）</li>
+        <li>指向源碼與文檔的入口</li>
       </ul>
-    </section>
-
-    <section>
-      <h2>本地安裝與使用</h2>
-      <ol class="steps">
-        <li>克隆倉庫：<code>git clone https://github.com/liuguoli-trade/CBDB_atlas.git</code></li>
-        <li>安裝依賴：<code>pip install -e ".[dev]"</code></li>
-        <li>啟動服務：在專案目錄執行 <code>python run.py</code>（Windows 可雙擊 <code>start_cbdb_atlas.bat</code>）</li>
-        <li>在瀏覽器開啟 <code>http://127.0.0.1:8770</code></li>
-        <li>
-          <strong>首次使用：</strong>在網頁點擊「更新資料」下載 CBDB；或手動將 SQLite 檔放入
-          <code>data/source/cbdb.sqlite3</code>，再執行 <code>scripts/create_views.sh</code>
-          （Windows：<code>scripts/create_views.bat</code>）建立便利視圖。
-        </li>
-        <li>
-          <strong>建議（性能）：</strong>資料庫就緒後執行
-          <code>python scripts/build_indexes.py</code>，可顯著加速人物檢索與關係探索；亦可於網頁使用「構建索引」。
-        </li>
-      </ol>
-    </section>
-
-    <section>
-      <h2>當前進度與已知問題</h2>
-      <p>
-        目前主要對<strong>人物、地名檢索</strong>進行了精細調整，其他區塊可能仍存在問題。
-        知識圖譜區塊目前僅提供篩選功能，尚未對關係進行整理——此舉是為保持資料原貌。
-      </p>
       <p class="muted" style="margin-top:0.75rem;">
-        開發者：刘国立LGL · 聯絡：<a href="mailto:1849682052@qq.com">1849682052@qq.com</a>
-      </p>
-    </section>
-
-    <section>
-      <h2>授權說明</h2>
-      <p>
-        CBDB 資料及基於其的查詢結果須遵守
-        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>
-        （署名、非商業、相同方式共享）。本項目程式碼與輸出亦按此條款發布；使用時請署名 CBDB。
-      </p>
-      <p class="muted" style="margin-top:0.75rem;">
-        CBDB Atlas 為獨立第三方工具，與 CBDB 項目組、Harvard 及任何 CBDB 商業被許可方均無官方關係。
-        本工具供非商業研究使用；商業用途須自行符合 CBDB 許可。
+        不適合：託管需要 Python 與 SQLite 的完整 CBDB Atlas 應用。
       </p>
     </section>
   </main>
@@ -261,9 +176,8 @@
     <p>
       <a href="https://github.com/liuguoli-trade/CBDB_atlas">liuguoli-trade/CBDB_atlas</a>
       ·
-      <a href="https://github.com/liuguoli-trade/CBDB_atlas/blob/main/README.md">完整 README</a>
+      <a href="https://github.com/liuguoli-trade/CBDB_atlas/blob/main/README.md">README</a>
     </p>
-    <p>CBDB Atlas — 本地 Web 應用，非線上託管版。</p>
   </footer>
 </body>
 </html>
