@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CBDB Atlas — 在瀏覽器中查詢中國歷代人物傳記資料庫（CBDB）的本地 Web 應用。" />
+  <title>CBDB Atlas · 中國歷代人物傳記資料庫</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand: #1a5f7a;
+      --brand-dark: #134555;
+      --bg: #f4f7f9;
+      --card: #fff;
+      --border: #d8e2e8;
+      --ink: #1a1a1a;
+      --ink-muted: #5c6b73;
+      --radius: 6px;
+      --font-body: "Noto Serif TC", "Noto Serif SC", "SimSun", serif;
+      --font-ui: "Source Sans 3", system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+    a { color: var(--brand); }
+    a:hover { color: var(--brand-dark); }
+    code {
+      font-family: var(--font-ui);
+      font-size: 0.88em;
+      background: #eef3f6;
+      padding: 0.12em 0.4em;
+      border-radius: 3px;
+    }
+    .site-header {
+      background: linear-gradient(180deg, var(--brand), var(--brand-dark));
+      color: #fff;
+      padding: 2.5rem 1.25rem 2rem;
+    }
+    .header-inner {
+      max-width: 880px;
+      margin: 0 auto;
+    }
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .logo {
+      width: 56px;
+      height: 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(255,255,255,.75);
+      border-radius: 4px;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: 0.72rem;
+      line-height: 1.15;
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+    .logo-sub { font-size: 0.62rem; opacity: 0.9; }
+    h1 {
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 600;
+      line-height: 1.35;
+    }
+    .tagline {
+      font-family: var(--font-ui);
+      font-size: 1.05rem;
+      opacity: 0.92;
+      max-width: 42rem;
+    }
+    .notice {
+      margin-top: 1.25rem;
+      padding: 0.75rem 1rem;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: var(--radius);
+      font-family: var(--font-ui);
+      font-size: 0.9rem;
+    }
+    main {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 3rem;
+    }
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    h2 {
+      font-size: 1.2rem;
+      margin-bottom: 0.75rem;
+      color: var(--brand-dark);
+    }
+    h3 {
+      font-family: var(--font-ui);
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 1.1rem 0 0.5rem;
+      color: var(--ink);
+    }
+    p, li { color: var(--ink); }
+    .muted { color: var(--ink-muted); font-family: var(--font-ui); font-size: 0.92rem; }
+    ul { padding-left: 1.25rem; }
+    li + li { margin-top: 0.35rem; }
+    ol.steps { padding-left: 1.35rem; }
+    ol.steps li { margin-top: 0.6rem; }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+      list-style: none;
+      padding: 0;
+    }
+    .features li {
+      padding: 0.85rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-top: 1rem;
+    }
+    .btn {
+      display: inline-block;
+      font-family: var(--font-ui);
+      font-size: 0.92rem;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 0.55rem 1.1rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--brand-dark);
+    }
+    .btn.primary {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: #fff;
+    }
+    .btn.primary:hover { background: var(--brand-dark); color: #fff; }
+    .btn:hover { border-color: var(--brand); }
+    footer {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 0 1.25rem 2.5rem;
+      font-family: var(--font-ui);
+      font-size: 0.85rem;
+      color: var(--ink-muted);
+    }
+    footer p + p { margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo-row">
+        <div class="logo" aria-hidden="true">
+          <span>CBDB</span>
+          <span class="logo-sub">Atlas</span>
+        </div>
+        <h1>中國歷代人物傳記資料庫</h1>
+      </div>
+      <p class="tagline">
+        在瀏覽器中直接查詢 CBDB SQLite 資料的本地 Web 應用——無需繁複環境配置，讓人物、地名與關係檢索盡可能開箱可用。
+      </p>
+      <p class="notice">
+        本頁為項目介紹站。完整應用需在本地執行 <code>python run.py</code> 後，於瀏覽器開啟
+        <code>http://127.0.0.1:8770</code> 使用。
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>關於 CBDB Atlas</h2>
+      <p>
+        <a href="https://cbdb.hsites.harvard.edu/" target="_blank" rel="noopener">中國歷代人物傳記資料庫（CBDB）</a>
+        是面向中國歷史研究的結構化傳記資料庫。CBDB Atlas 將查詢邏輯外置於
+        <code>queries/</code>，在本地以 Web 界面提供人物檢索、傳記詳情、關係可視化與 Excel 匯出等功能。
+      </p>
+      <div class="actions">
+        <a class="btn primary" href="https://github.com/liuguoli-trade/CBDB_atlas" target="_blank" rel="noopener">GitHub 源碼</a>
+        <a class="btn" href="https://github.com/cbdb-project/cbdb_sqlite" target="_blank" rel="noopener">CBDB SQLite 官方發布</a>
+      </div>
+    </section>
+
+    <section>
+      <h2>主要功能</h2>
+      <ul class="features">
+        <li>人物、地名等多類型檢索與傳記詳情</li>
+        <li>關係可視化（單人、家族、交游、關係探索）</li>
+        <li>網頁一鍵下載並校驗官方 CBDB 資料</li>
+        <li>人物詳情匯出 Excel</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>本地安裝與使用</h2>
+      <ol class="steps">
+        <li>克隆倉庫：<code>git clone https://github.com/liuguoli-trade/CBDB_atlas.git</code></li>
+        <li>安裝依賴：<code>pip install -e ".[dev]"</code></li>
+        <li>啟動服務：在專案目錄執行 <code>python run.py</code>（Windows 可雙擊 <code>start_cbdb_atlas.bat</code>）</li>
+        <li>在瀏覽器開啟 <code>http://127.0.0.1:8770</code></li>
+        <li>
+          <strong>首次使用：</strong>在網頁點擊「更新資料」下載 CBDB；或手動將 SQLite 檔放入
+          <code>data/source/cbdb.sqlite3</code>，再執行 <code>scripts/create_views.sh</code>
+          （Windows：<code>scripts/create_views.bat</code>）建立便利視圖。
+        </li>
+        <li>
+          <strong>建議（性能）：</strong>資料庫就緒後執行
+          <code>python scripts/build_indexes.py</code>，可顯著加速人物檢索與關係探索；亦可於網頁使用「構建索引」。
+        </li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>當前進度與已知問題</h2>
+      <p>
+        目前主要對<strong>人物、地名檢索</strong>進行了精細調整，其他區塊可能仍存在問題。
+        知識圖譜區塊目前僅提供篩選功能，尚未對關係進行整理——此舉是為保持資料原貌。
+      </p>
+      <p class="muted" style="margin-top:0.75rem;">
+        開發者：刘国立LGL · 聯絡：<a href="mailto:1849682052@qq.com">1849682052@qq.com</a>
+      </p>
+    </section>
+
+    <section>
+      <h2>授權說明</h2>
+      <p>
+        CBDB 資料及基於其的查詢結果須遵守
+        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>
+        （署名、非商業、相同方式共享）。本項目程式碼與輸出亦按此條款發布；使用時請署名 CBDB。
+      </p>
+      <p class="muted" style="margin-top:0.75rem;">
+        CBDB Atlas 為獨立第三方工具，與 CBDB 項目組、Harvard 及任何 CBDB 商業被許可方均無官方關係。
+        本工具供非商業研究使用；商業用途須自行符合 CBDB 許可。
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      <a href="https://github.com/liuguoli-trade/CBDB_atlas">liuguoli-trade/CBDB_atlas</a>
+      ·
+      <a href="https://github.com/liuguoli-trade/CBDB_atlas/blob/main/README.md">完整 README</a>
+    </p>
+    <p>CBDB Atlas — 本地 Web 應用，非線上託管版。</p>
+  </footer>
+</body>
+</html>
